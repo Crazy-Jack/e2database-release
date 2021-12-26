@@ -6,19 +6,7 @@
 
 <div id="search-container" class="container" style="padding-top: 55px; padding-right: 20em;">
   
-  <div class="stacked-chart-container js-stacked-chart-container">
-    <form class="controls">
-        <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
-        &nbsp;
-        <label><input type="radio" name="mode" value="grouped"> Grouped</label>
-    </form>
-    <svg class="stacked-chart js-stacked-chart"></svg>
-    <div class="tooltip js-tooltip">
-        <div class="tooltip-wrapper">
-            <table class="tooltip-table js-tooltip-table"></table>
-        </div>
-    </div>
-  </div>
+  
   <!-- <span class="demo" title="hello" data-tipso="I'm a tooltip">Hover me</span> -->
 <div id="myfilterbox" class="listbox-area">
   <div>
@@ -122,15 +110,41 @@
   </div>
   <div style="padding: 1em;"></div>
   
-  <div id="post_table_1" style="width: 50em;" class="">
+  <div id="post_table_1" style="width: 50em;" class="hidden">
     <div id="num_genes_1" style="padding-bottom: 1em;"></div>
-    <div id="chart-micro-1-container" class="hidden">
-      
+    <div class="stacked-chart-container js-stacked-chart-container-up-micro">
+      <form class="controls">
+          <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
+          &nbsp;
+          <label><input type="radio" name="mode" value="grouped"> Grouped</label>
+      </form>
+      <svg id="js-stacked-chart-up-micro" class="stacked-chart js-stacked-chart"></svg>
+      <div id="js-tooltip-up-micro" class="tooltip js-tooltip">
+          <div class="tooltip-wrapper">
+              <table class="tooltip-table js-tooltip-table"></table>
+          </div>
+      </div>
     </div>
+    <div style="padding-bottom: 2em;"></div>
     <table id="microarray_table_up_1">
     </table>
 
-    <div id="num_genes_1_rna" style="padding-bottom: 1em; padding-top: 2em;"></div>
+    <div id="num_genes_1_rna" style="padding-top: 3em;"></div>
+
+    <div class="stacked-chart-container js-stacked-chart-container-up-rnaseq">
+      <form class="controls">
+          <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
+          &nbsp;
+          <label><input type="radio" name="mode" value="grouped"> Grouped</label>
+      </form>
+      <svg id="js-stacked-chart-up-rnaseq" class="stacked-chart js-stacked-chart"></svg>
+      <div id="js-tooltip-up-rnaseq" class="tooltip js-tooltip">
+          <div class="tooltip-wrapper">
+              <table class="tooltip-table js-tooltip-table"></table>
+          </div>
+      </div>
+    </div>
+    <div style="padding-bottom: 2em;"></div>
     <table id="rnaseq_table_up_1">
     </table>
 
@@ -168,13 +182,45 @@
   </div>
   <div style="padding: 1em;"></div>
   
-  <div id="post_table_2" style="width: 50em;" class="">
+  <div id="post_table_2" style="width: 50em;" class="hidden">
     <div id="num_genes_2" style="padding-bottom: 1em;"></div>
+
+    <div class="stacked-chart-container js-stacked-chart-container-down-micro">
+      <form class="controls">
+          <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
+          &nbsp;
+          <label><input type="radio" name="mode" value="grouped"> Grouped</label>
+      </form>
+      <svg id="js-stacked-chart-down-micro" class="stacked-chart js-stacked-chart"></svg>
+      <div id="js-tooltip-down-micro" class="tooltip js-tooltip">
+          <div class="tooltip-wrapper">
+              <table class="tooltip-table js-tooltip-table"></table>
+          </div>
+      </div>
+    </div>
+
+    <div style="padding-bottom: 2em;"></div>
     <table id="microarray_table_up_2">
     </table>
     
 
-    <div id="num_genes_2_rna" style="padding-bottom: 1em; padding-top: 2em;"></div>
+    <div id="num_genes_2_rna" style="padding-bottom: 1em; padding-top: 3em;"></div>
+
+    <div class="stacked-chart-container js-stacked-chart-container-down-rnaseq">
+      <form class="controls">
+          <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
+          &nbsp;
+          <label><input type="radio" name="mode" value="grouped"> Grouped</label>
+      </form>
+      <svg id="js-stacked-chart-down-rnaseq" class="stacked-chart js-stacked-chart"></svg>
+      <div id="js-tooltip-down-rnaseq" class="tooltip js-tooltip">
+          <div class="tooltip-wrapper">
+              <table class="tooltip-table js-tooltip-table"></table>
+          </div>
+      </div>
+    </div>
+
+    <div style="padding-bottom: 2em;"></div>
     <table id="rnaseq_table_up_2">
     </table>
   </div>

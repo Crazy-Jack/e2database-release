@@ -3,17 +3,32 @@
 "use strict";
 
 /*global $, d3, _ */
-function drawStackPlot() {
+function drawStackPlot(data, up_down_select, mode_str, highest) {
+    $(`.js-stacked-chart-container-${up_down_select}-${mode_str}`).html(
+        `<div class="stacked-chart-container js-stacked-chart-container-${up_down_select}-${mode_str}">
+        <form class="controls">
+            <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
+            &nbsp;
+            <label><input type="radio" name="mode" value="grouped"> Grouped</label>
+        </form>
+        <svg id="js-stacked-chart-${up_down_select}-${mode_str}" class="stacked-chart js-stacked-chart"></svg>
+        <div id="js-tooltip-${up_down_select}-${mode_str}" class="tooltip js-tooltip">
+            <div class="tooltip-wrapper">
+                <table class="tooltip-table js-tooltip-table"></table>
+            </div>
+        </div>
+      </div>`
+    )
     var seriesNames = ["Significant", "Non-Significant"],
         
         numSamples = 50,
         numSeries = seriesNames.length,
-        data = seriesNames.map(function (name) {
-            return {
-                name: name,
-                values: bumpLayer(numSamples, 0.1)
-            };
-        }),
+        // data = seriesNames.map(function (name) {
+        //     return {
+        //         name: name,
+        //         values: bumpLayer(numSamples, 0.1)
+        //     };
+        // }),
         stack = d3.layout.stack().values(function (d) { return d.values; });
 
     stack(data);
@@ -21,15 +36,14 @@ function drawStackPlot() {
     var chartMode = "stacked",
         numEnabledSeries = numSeries,
         lastHoveredBarIndex,
-        containerWidth = document.querySelector(".js-stacked-chart-container").clientWidth,
+        containerWidth = document.querySelector(`.js-stacked-chart-container-${up_down_select}-${mode_str}`).clientWidth,
         containerHeight = 500,
-        margin = {top: 80, right: 30, bottom: 70, left: 30},
+        margin = {top: 80, right: 30, bottom: 70, left: 50},
         width = containerWidth - margin.left - margin.right,
         height = containerHeight - margin.top - margin.bottom,
         widthPerStack = width / numSamples,
         animationDuration = 400,
         delayBetweenBarAnimation = 10,
-        numYAxisTicks = 8,
         maxStackY = d3.max(data, function (series) { return d3.max(series.values, function (d) { return d.y0 + d.y; }); }),
         paddingBetweenLegendSeries = 5,
         legendSeriesBoxX = 0,
@@ -50,8 +64,8 @@ function drawStackPlot() {
     // .domain(d3.range(numSamples))
     // .rangeBands([0, width], 0.1, 0.05);
     var binsScale = d3.scale.ordinal()
-    .domain(d3.range(numSamples).map(function (idx) {return "str-" + idx}))
-    .rangeBands([0, width-10], 0.04, 0.1);
+    .domain(data[0].values.map(function (data_i) {return data_i.x})) // .domain(d3.range(numSamples).map(function (idx) {return "str-" + idx}))
+    .rangeBands([0, width-10], 0.08, 0.1);
     // .rangeBands([0, width], 0.1, 0.05);
     widthPerStack = binsScale.range()[1] - binsScale.range()[0]
 
@@ -61,7 +75,8 @@ function drawStackPlot() {
 
     var yScale = d3.scale.linear()
         .domain([0, maxStackY])
-        .range([height, 0]);
+        .range([height, 0])
+        .interpolate(d3.interpolateRound);
 
     var heightScale = d3.scale.linear()
         .domain([0, maxStackY])
@@ -69,13 +84,15 @@ function drawStackPlot() {
 
     var xAxis = d3.svg.axis()
         .scale(binsScale) //binsScale)
-        .tickFormat(function(d){ return "S" + d;} )
+        .tickFormat(function(d){ return d;} )
         .orient("bottom");
 
     var yAxis = d3.svg.axis()
         .scale(yScale)
-        .orient("left");
-
+        .orient("left")
+        .tickFormat(d3.format("d"))
+        .tickSubdivide(0);;
+        
     var enabledSeries = function () { return _.reject(data, function (series) { return series.disabled; }); };
 
     var seriesClass = function (seriesName) { return "series-" + seriesName.toLowerCase(); };
@@ -114,7 +131,13 @@ function drawStackPlot() {
             .attr("height", barHeight);
     };
 
-    var svg = d3.select(".js-stacked-chart")
+    // numYAxisTicks
+    var numYAxisTicks = 8
+    if (highest <= 1) {
+        numYAxisTicks = 1;
+    }
+
+    var svg = d3.select(`#js-stacked-chart-${up_down_select}-${mode_str}`)  // costomize svg tag id
         .attr("width", containerWidth)
         .attr("height", containerHeight);
 
@@ -160,6 +183,14 @@ function drawStackPlot() {
             .attr("class", "y axis")
             .call(yAxis);
         
+        mainArea.append('g')
+            .attr('transform', 'translate(-30, ' + height / 2 + ')')
+            .append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', 'rotate(-90)')
+            .text('Num. of Data');
+        
+        
         svg.append("rect")
             .attr("class", "overlay")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
@@ -185,14 +216,14 @@ function drawStackPlot() {
             .attr("y", legendSeriesBoxY)
             .attr("width", legendSeriesBoxWidth)
             .attr("height", legendSeriesBoxHeight);
-            legendSeries.append("text")
+        legendSeries.append("text")
             .attr("class", "series-label")
             .attr("x", legendSeriesLabelX)
             .attr("y", legendSeriesLabelY)
             .text(String);
         
         
-        d3.selectAll(".js-stacked-chart-container input").on("change", changeChartMode);
+        d3.selectAll(`.js-stacked-chart-container-${up_down_select}-${mode_str} input`).on("change", changeChartMode);
         
         /**
          * Toggles a certain series.
@@ -401,8 +432,8 @@ function drawStackPlot() {
 
         layers.selectAll("rect").classed("highlighted", function (d, i) { return (i === hoveredBarIndex); });
 
-        tooltip = $(".js-tooltip");
-        tooltip.find(".js-tooltip-table").html(tooltipContent("fe"));
+        tooltip = $(`#js-tooltip-${up_down_select}-${mode_str}`); // costomize for tooltips id
+        tooltip.find(".js-tooltip-table").html(tooltipContent());
         tooltip.css({
             top:  margin.top  + highestBinBarHeight() - tooltip.outerHeight() - tooltipBottomMargin,
             left: margin.left + (hoveredBarIndex * widthPerStack) + (widthPerStack / 2) - (tooltip.outerWidth() / 2),
@@ -411,13 +442,13 @@ function drawStackPlot() {
         }).fadeIn(500);
     }
 
-    function tooltipContent (title) {
+    function tooltipContent () {
         var title, bars;
 
         bars = [];
         layers.each(function (d) {
             title = d.values[lastHoveredBarIndex].x
-            bars.unshift({ name: d.name, value: d.values[lastHoveredBarIndex].y.toFixed(4)});
+            bars.unshift({ name: d.name + " Count:", value: d.values[lastHoveredBarIndex].y.toFixed(0)});
         });
         
         return tooltipTemplate({ bars: bars, title: title});
@@ -427,7 +458,7 @@ function drawStackPlot() {
      * Hides the tooltip.
      */
     function hideTooltip () {
-        $(".js-tooltip").stop().hide();
+        $(`#js-tooltip-${up_down_select}-${mode_str}`).stop().hide();
 
         layers.selectAll("rect")
             .filter(function (d, i) { return (i === lastHoveredBarIndex); })

@@ -36,8 +36,8 @@ def render_search_page(request):
     """test_render_search_page"""
     # preload data
     prepath = "/home/tianqinl/mye2/cirDraw/tools/cache.pkl"
-    if not os.path.isfile(prepath):
-        prepath = "/home/tianqinl/Code/mye2/cirDraw/tools/cache.pkl"
+    if not os.path.isfile(prepath): 
+        prepath = "/home/tianqinl/Code/e2database-release/cirDraw/tools/cache.pkl"
     with open(prepath, 'rb') as f:
          all_out_data = pickle.load(f)
     all_out_data_json = json.dumps(all_out_data)
