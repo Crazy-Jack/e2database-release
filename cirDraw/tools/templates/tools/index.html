@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}   
+  <!-- Header -->
+  <header class="masthead">
+    <div class="container">
+      <div class="intro-text">
+        <div style="display: flex;">
+          <div class="padding:20px"></div>
+          <div class="intro-lead-in">Visualization & Analysis</div>
+        </div>
+        
+        <div style="display: flex;">
+          <div class="padding:20px"></div>
+          <div class="intro-heading">EstroGene DataBase</div>
+          
+        </div>
+        <div style="display: flex;">
+          <div class="padding:20px"></div>
+          <div class="intro-subtitle">A Comprehensive
+            NGS Database Focusing on Estrogen
+            Biology in Breast Cancer</div>
+        </div>
+        
+        <div style="display: flex;">
+          <div class="padding:20px"></div>
+          <a class="btn btn-primary btn-xl text-uppercase js-scroll-trigger" href="#about-id">Get Started!</a>
+          <div id="scrolldowntip" class="center movedown">
+            <a href="#services">
+          
+          </div>
+        </div>
+        <br><br>
+        <div style="display: flex;">
+        <div style="width: 205px"></div>
+        <img src="../../../static/base/img/arrows.png" class="down animated fadeInDown infinite small"></a>
+      </div>
+        
+        
+        <!--<p class="down animated fadeIn infinite copyright">What is circDraw?</p>-->
+      
+      </div>
+    </div>
+  </header>  
+  
+ 
+  <!-- Features -->
+  <section id="services">
+        <div class="container">
+        <div class="row">
+            <div class="abstr-text">
+            <h2 id="about-id" class="section-heading text-uppercase">About</h2>
+            </br>
+            <p class="section-subheading text-muted">The EstroGene Project was launched by the Drs. Steffi Oesterreich
+              and Adrian Lee’s Laboratory at University of Pittsburgh, UPMC
+              Hillman Cancer Center. It aims to document and integrate the
+              majority of publicly available estrogen-related next generation
+              sequencing data sets (including RNA-seq, microarray, ChIP-seq,
+              ATAC-seq, DNase-seq, ChIA-PET, Hi-C, GRO-seq, etc), and
+              establish a comprehensive data base to allow users’ customized data
+              search and visualization visualization.</p>
+              <p class="section-subheading text-muted">Estrogen receptors (ER) belongs to the nuclear receptor family which is indispensable for sensing estrogen signaling and mediating development, metabolism, homeostasis and other essential functions of the organism. ER-α has been widely reported as the key estrogen signaling receptor in ER+ breast cancer, which accounts for above 70% of all breast cancer cases. Upon activation by ligands, ER-α tends to form dimers and binds to genomic DNA to trigger the confound downstream effects. The rapid development of next generation sequencing technologies leads to hundreds of unbiased genomic profiling and benefits a comprehensive understanding of estrogen receptor actions in breast cancer. However, lack of a central database which curates and summarizes these publicly available estrogen data sets largely limits the power for these NGS profiles.</p>
+              <p class="section-subheading text-muted">It is a comprehensive database: </p>
+                <div style="padding-right: 5em;" class="text-muted">
+                  <ul>
+                    <li>Focusing on estrogen receptor biology in breast cancer</li>
+                    
+                    <li>Integrating above 120 multi-omic NGS data sets from
+                    previous publications</li>
+                    
+                    <li>Built for users’ customized searching and analysis</li>
+                
+                  </ul>
+                </div>
+                <br><br>
+                <h2 class="section-heading text-uppercase">Features</h2>
+                <p class="section-subheading text-muted">Transcriptomic Analysis (microarray and RNA-seq): </p>
+                <div class="section-subheading text-muted">
+                  <ul>
+                    <li>
+                      Curated 99 comparisons from 20 breast cancer cell lines (67 from microarray and 32 from RNA-seq)
+                    </li>
+                    <li>
+                      Visualize the gene expressional changes after E2 treatment of each experiment
+                    </li>
+                    <li>
+                      Compute the percentages of data sets showing significant up- or down-regulations to the gene of interest
+                    </li>
+                  </ul>
+                </div>
+
+
+                <p class="section-subheading text-muted">ER Cistromic Analysis (ChIP-seq): </p>
+                <div class="section-subheading text-muted">
+                  <ul>
+                    <li>
+                      Currently curated 21 profiles from 10 data sets and 5 breast cancer cell lines (more to be added)
+                    </li>
+                    <li>
+                      Visualize the ER binding sites and intensities within -/+ 200 kb TSS of each gene
+                    </li>
+                    <li>
+                      Summarize the ER binding site clusters of each bin of 10 kb
+                    </li>
+                  </ul>
+                </div>
+                <br><br>
+                
+            </div>
+        </div>
+
+
+        <div class="row text-center">
+          
+          
+          <div class="col-md-4">
+            <span class="fa-stack fa-4x">
+              <img class="main-page-icon fa-inverse" src="{% static 'base/img/microarray-icon.jpg' %}" width="100%">
+                
+            </span>
+
+            <a style="color: black" href="{% url 'manual' %}"><h4 class="service-heading">MicroArray Analysis</h4></a>
+            <!-- <p class="text-muted">Up/down regulation analysis for gene of interests based on MircoArray Datasets</p> -->
+            <br><br>
+            <div style="display: flex;">
+            <img class="manual-img" src="{% static 'base/img/greb1-micro.png' %}" height="157px" width="100%">
+          </div>
+            </div>
+
+            
+
+
+            <div class="col-md-4">
+            <span class="fa-stack fa-4x">
+              <img class="main-page-icon" src="{% static 'base/img/AZX1bcrSWu2wEwskyDFh_2000px-DNA_sequence.svg.png' %}" width="100%">
+            </span>
+
+            <a style="color: black" href="{% url 'manual' %}"><h4 class="service-heading">RNA-seq Analysis</h4></a>
+            <!-- <p class="text-muted">
+              Up/down regulation analysis for gene of interests based on Chip-seq Datasets
+            </p> -->
+            <br><br>
+            <img class="manual-img" src="{% static 'base/img/greb1-rnaseq.png' %}" height="157px", width="100%">
+            </div>
+            <div class="col-md-4">
+            <span class="fa-stack fa-4x">
+              <img class="main-page-icon" src="{% static 'base/img/chipseq.jpg' %}" width="200%">
+            </span>
+            <a style="color: black" href="{% url 'manual' %}"><h4 class="service-heading">ChIP-seq Analysis</h4></a>
+            <br><br>
+            <!-- <p class="text-muted">Up/down regulation analysis for gene of interests based on Chip-seq Datasets</p> -->
+            <img class="manual-img" src="{% static 'base/img/greb1-chipseq.png' %}" height="157px", width="100%">
+            </div>
+        </div>
+        </div>
+        <div class="get-start-2"><a class="btn btn-primary btn-xl text-uppercase js-scroll-trigger" href="{% url 'tools' %}">Get Started!</a></div>
+        
+    </section>
+  {% endblock %}
+

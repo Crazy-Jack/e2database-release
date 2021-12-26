@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}    
+<section id="manual">
+    <div class="container">
+        <div class="row">
+
+
+        <div class="col-lg-12">
+            <h2 class="section-heading text-uppercase">EstroGene MetaData</h2>
+            <h3 class="section-subheading text-muted">Documentation about the dataset we include in our project for analysis</h3>
+            
+            <h3>Dataset Components</h3>
+            
+            <br>
+            <p>EstroGene database currently curates 128 publicly available data sets from eight distinct NGS technologies, which consists
+                of 286 data points for downstream analysis. All data sets were downloaded from Gene Expression Omnibus and
+                processed under the uniformed pipelines.</p>
+            </br>
+            <div>
+                
+                <div style='display: flex;'>
+  
+                <img src="{% static 'base/img/metadata-process-pipe.png' %}" width="30%" style="padding-right: 2vw;">
+
+                
+                
+                <table style="width:90%; text-align: center;" border="3">
+                    <tr>
+                      <th>Data Type</th>
+                      <th>Technique</th>
+                      <th>Dataset curated</th>
+                      <th>Individual Data Points</th>
+                    </tr>
+                    
+                    
+                    
+                    <tr>
+                        <td rowspan=2 >Expressional Profiling</td>
+                        <td>RNA-seq</td>
+                        <td>25</td>
+                        <td>68</td>
+
+
+
+                    </tr>
+                    <tr>
+                        <td>Microarray</td>
+                        <td>23</td>
+                        <td>86</td>
+
+
+                    </tr>
+                    <tr>
+                        <td rowspan=4 >Genomic Occupancy Profiling</td>
+                        <td>ATAC-seq</td>
+                        <td>5</td>
+                        <td>5</td>
+
+
+                    </tr>
+                    <tr>
+
+
+                        <td>DNase-seq</td>
+                        <td>1</td>
+                        <td>1</td>
+
+                    </tr>
+                    <tr>
+                        <td>ER ChIP-seq</td>
+                        <td>58</td>
+                        <td>97</td>
+
+                    </tr>
+                    <tr>
+                        <td>GRO-seq</td>
+                        <td>10</td>
+                        <td>15</td>
+
+
+                    </tr>
+                    <tr>
+                        <td rowspan=2 >Genomic Interaction Profiling</td>
+                        <td>ER ChIA-PET</td>
+                        <td>2</td>
+                        <td>2</td>
+
+
+                    </tr>
+                    <tr>
+                        <td>Hi-C/TCC</td>
+                        <td>4</td>
+                        <td>12</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total</td>
+                        <td>- </td>
+                        <td>128</td>
+                        <td>286</td>
+                    </tr>
+                    
+                  </table>
+                </div>
+
+                <br>
+                <br>
+                <div style="text-align: center;">Figure 1. Data searching
+                    strategy and summary of
+                    currently curated data sets</div>
+
+            </div>
+            </br>
+            </br>
+            
+
+
+            <div align="middle"><img src="{% static 'base/img/meta2.png' %}" width="70%"></div>
+            </br>
+            <br>
+            <div style="text-align: center;">Figure 2. Chronological overview of curated NGS data sets</div>
+            
+            <br>
+            <br>
+            <h3>
+                Experimental documentation
+            </h3>
+
+            <br>
+            <p>With the rising importance of rigor and reproducibility in scientific research, EstroGene team also closely curated and
+                summarized all the experimental details from each original publication/data portal, as part of the project. Current efforts
+                on RNA-seq/microarray/ChIP-seq data sets analysis revealed two distinct levels of experimental documentations:
+                
+                Essential (Level1) and non-essential (Level2) experimental details to support data analysis and interpretation.</p>
+                <br>
+
+            <div align="middle"><img src="{% static 'base/img/meta-rna-micro.png' %}" width="70%"></div>
+            <br>
+            <div align="middle"><img src="{% static 'base/img/Chipseq-meta.png' %}" width="70%"></div>
+            <br>
+            <br>
+            <div style="text-align: center;">Figure 3. Experimental condition availability for RNA-seq/microarray/ChIP-seq data sets</div>
+            <br>
+            <br>
+            <p>
+                As shown in the figure above, the significant
+lack of Level2 experimental documentation is
+uncovered. We would like to take this
+opportunity to emphasize the importance of
+reporting all the experimental conditions in
+NGS data sets to benefit the filed improving
+rigor and reproducibility.
+            </p>
+        </div>
+        </div>
+
+        
+
+
+
+</section>
+
+{% endblock %}

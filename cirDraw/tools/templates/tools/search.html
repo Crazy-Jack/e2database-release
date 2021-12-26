@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<div id="search-container" class="container" style="padding-top: 55px;">
+  <div id="uploadarea" class="center horizon">
+
+    <form id="fileform" action="/search/">
+      {% csrf_token %}
+      <label for="fname">Enter Gene name: </label>
+      <input type="text" id="fname" class="hint" name="fname" value="GREB1"  
+          onfocus="if (this.className=='hint') { this.className = ''; this.value = 'GREB1'; }"
+          onblur="if (this.value == '') { this.className = 'hint'; this.value = 'GREB1'; }">
+      <input type="submit" id="submit" value="Search">
+      <!-- <a id="refresher" href='/tools/'><i class="fas fa-redo-alt ml-1"></i></a> -->
+    </form>
+    <div id="processtip" style="margin-left: 10px; margin-top: 7px;"></div>
+  </div>
+
+  <!-- <span class="demo" title="hello" data-tipso="I'm a tooltip">Hover me</span> -->
+<div id="myfilterbox" class="listbox-area hidden">
+  <div>
+    <span id="ss_elem" class="listbox-label"><b>Filtering:</b></span>
+    <div style="display:flex;">
+      <div>
+        <span>Cell Line:</span>
+        <ul class="ss_elem_list" id="ss_elem_list1" tabindex="0" role="listbox" aria-labelledby="ss_elem"> 
+          <li id="ss_elem_Np" role="option">Neptunium</li>
+          <li id="ss_elem_Pu" role="option">Plutonium</li>
+          <li id="ss_elem_Am" role="option">Americium</li>
+          <li id="ss_elem_Cm" role="option">Curium</li>
+          <li id="ss_elem_Bk" role="option">Berkelium</li>
+          <li id="ss_elem_Cf" role="option">Californium</li>
+          <li id="ss_elem_Es" role="option">Einsteinium</li>
+          <li id="ss_elem_Fm" role="option">Fermium</li>
+          <li id="ss_elem_Md" role="option">Mendelevium</li>
+          <li id="ss_elem_No" role="option">Nobelium</li>
+          <li id="ss_elem_Lr" role="option">Lawrencium</li>
+          <li id="ss_elem_Rf" role="option">Rutherfordium</li>
+          <li id="ss_elem_Db" role="option">Dubnium</li>
+          <li id="ss_elem_Sg" role="option">Seaborgium</li>
+          <li id="ss_elem_Bh" role="option">Bohrium</li>
+          <li id="ss_elem_Hs" role="option">Hassium</li>
+          <li id="ss_elem_Mt" role="option">Meitnerium</li>
+          <li id="ss_elem_Ds" role="option">Darmstadtium</li>
+          <li id="ss_elem_Rg" role="option">Roentgenium</li>
+          <li id="ss_elem_Cn" role="option">Copernicium</li>
+          <li id="ss_elem_Nh" role="option">Nihonium</li>
+          <li id="ss_elem_Fl" role="option">Flerovium</li>
+          <li id="ss_elem_Mc" role="option">Moscovium</li>
+          <li id="ss_elem_Lv" role="option">Livermorium</li>
+          <li id="ss_elem_Ts" role="option">Tennessine</li>
+          <li id="ss_elem_Og" role="option">Oganesson</li>
+        </ul>
+      </div>
+      <div style="font-size:30px; padding:15px; border-right: 1px dashed black;height: 25vh;">&nbsp;</div>
+      <div style="font-size:30px; padding:15px; ">&nbsp;</div>
+      <div>
+        <span>Duration:</span>
+        <ul class="ss_elem_list" id="ss_elem_list2" tabindex="0" role="listbox" aria-labelledby="ss_elem"> 
+          <li id="ss_elem_2_1" role="option">1 hour</li>
+          <li id="ss_elem_2_2" role="option">2 hour</li>
+          <li id="ss_elem_2_3" role="option">3 hour</li>
+          <li id="ss_elem_2_4" role="option">4 hour</li>
+          <li id="ss_elem_2_5" role="option">6 hour</li>
+          <li id="ss_elem_2_6" role="option">8 hour</li>
+          <li id="ss_elem_2_7" role="option">12 hour</li>
+          <li id="ss_elem_2_8" role="option">16 hour</li>
+          <li id="ss_elem_2_9" role="option">18 hour</li>
+          <li id="ss_elem_2_10" role="option">24 hour</li>
+          <li id="ss_elem_2_11" role="option">48 hour</li>
+        </ul>
+      </div>
+
+      <div style="font-size:30px; padding:15px; border-right: 1px dashed black;height: 25vh;">&nbsp;</div>
+      <div style="font-size:30px; padding:15px; ">&nbsp;</div>
+      <div>
+        <span>Dose:</span>
+        <ul class="ss_elem_list" id="ss_elem_list3" tabindex="0" role="listbox" aria-labelledby="ss_elem"> 
+          <li id="ss_elem_3_1" role="option">1 nM</li>
+          <li id="ss_elem_3_2" role="option">10 nM</li>
+          <li id="ss_elem_3_3" role="option">1000 nM</li>
+        </ul>
+      </div>
+
+      <div style="font-size:30px; padding:15px; border-right: 1px dashed black;height: 25vh;">&nbsp;</div>
+      <div style="font-size:30px; padding:15px; ">&nbsp;</div>
+      <div>
+        <span>Adjusted p-value (<)</span>
+        <ul class="ss_elem_list" id="ss_elem_list4" tabindex="0" role="listbox" aria-labelledby="ss_elem"> 
+          <li id="ss_elem_4_1" role="option">0.05</li>
+          <li id="ss_elem_4_2" role="option">0.1</li>
+          <li id="ss_elem_4_3" role="option">ALL</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+  <!-- <p id="aftersubmit"></p> -->
+  
+  <div><p id="aftersubmit1"></p></div>
+  <div><p id="aftersubmit2"></p></div>
+  <div><p id="aftersubmit3"></p></div>
+  <!-- <div id="dashline1"></div> -->
+  <div id="figure1" class="horizon-flex-contain">
+    
+      <div class="chart-container">
+        <div id="chart1-title-id" style="text-align: center;"></div>
+        <canvas id="myChart"></canvas> 
+        <a id="download1"
+          href=""
+          class="btn btn-primary float-right bg-flat-color-1"
+          title="Descargar Gráfico">
+
+                  <!-- Download Icon -->
+          <i class="fa fa-download"></i>
+        </a>
+      </div>
+
+      <div>
+        <div style="height: 5vh;"></div>
+        <div style="display: flex; ">
+          <div id="duration_container"></div>
+          <div id="legend_container"></div>
+          <div id="legend_stats"></div>
+        </div>
+      </div>
+      
+    
+    
+  </div>
+  
+  <div id="dashline2"></div>
+
+  <div id="figure2" class="horizon-flex-contain">
+    <div class="chart-container">
+      <div id="chart2-title-id" style="text-align: center;"></div>
+      <canvas id="myChart_rna"></canvas> 
+      <a id="download2"
+          href=""
+          class="btn btn-primary float-right bg-flat-color-1"
+          title="Descargar Gráfico">
+
+                  <!-- Download Icon -->
+          <i class="fa fa-download"></i>
+        </a>
+    </div>
+
+    <div> 
+      <div style="height: 5vh;"></div>
+      <div style="display: flex" style="height:55vh;">
+        <div id="duration_container_rna"></div>
+        <div id="legend_container_rna"></div>
+        <div id="legend_stats_rna"></div>
+      </div>
+      <div style="height: 4em;"></div>
+    </div>
+    
+  </div>
+
+
+  <div id="dashline3"></div>
+  
+  <div id="figure3" class="horizon-flex-contain">
+    <div id="chart-container3" class="chart-container" style="position: relative; height:80vh; width:45vw">
+      <div id="chart3-title-id" style="text-align: center; width: 45vw"></div>
+  
+      <div style="display: flex">
+        <!-- <div style="width: 6px;"></div> -->
+        <div style="height: 15vh; width:43vw">
+          <canvas id="myChart_chipseq_distribution"></canvas> 
+        </div>
+      </div>
+      
+      
+      <div id="chipseq-big" style="display: flex">
+        <!-- <div style="width: 6px;"></div> -->
+        <div style="height: 44.5vh;width:45vw;">
+          <canvas id="myChart_chipseq"></canvas> 
+          <a id="download3"
+          href=""
+          class="btn btn-primary float-right bg-flat-color-1"
+          title="Descargar Gráfico">
+
+                  <!-- Download Icon -->
+          <i class="fa fa-download"></i>
+        </a>
+        </div>
+      </div>
+      
+      
+    </div>
+    <div style="width: 15vw;">
+      <div style="height: 5vh;"></div>
+      <div id="chipseq_legend_container" style="display: flex;">
+        <div id="duration_container_chipseq"></div>
+        <div style="width: 20vw;" id="legend_container_chipseq"></div>
+        <div style="width: 20vw;" id="legend_stats_chipseq"></div>
+      </div>
+
+      <div> 
+        <div style="display: flex">
+          <div style="width: 30vw"> </div>
+          <div id="boxplot_chipseq_canvas">
+            <div style="height: 1vh;"></div>
+            <canvas id="myChart_chipseq_datasetdetail"></canvas> 
+          </div>
+        </div>
+        <!-- <div style="height: 5%"></div> -->
+      </div>
+      <br><br>
+      
+      
+      
+    </div>
+    
+  </div>
+  
+  
+</div>
+
+</div>
+
+
+
+<!-- Upload -->
+{% endblock %}
+
+{% block otherJS %}
+<!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" integrity="sha256-e47xOkXs1JXFbjjpoRr1/LhVcqSzRmGmPqsrUQeVs+g=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js" integrity="sha256-cs4thShDfjkqFGk5s2Lxj35sgSRr4MRcyccmi0WKqCM=" crossorigin="anonymous"></script>
+-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
+<script src="https://unpkg.com/@sgratzl/chartjs-chart-boxplot@3"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot@2.4.0/build/Chart.BoxPlot.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script src="{% static 'tools/js/search.js' %}"></script>
+<script src="{% static 'tools/js/select.js' %}"></script>
+<script src="{% static 'tools/js/tipso.js' %}"></script>
+<script type="text/javascript"> 
+  function decodeHtml(html) {
+      var txt = document.createElement("textarea");
+      txt.innerHTML = html;
+      return txt.value;
+  }
+  var preload = decodeHtml("{{preload}}");
+</script>
+{% endblock %}

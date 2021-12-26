@@ -1,0 +1,4 @@
+venv/
+secret.sh
+__pycache__/
+database/
