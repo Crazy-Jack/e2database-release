@@ -988,42 +988,29 @@ $(document).ready(function () {
         else {
             $('#legend_container_chipseq').html("<div id='legend_container_chipseq'></div>");
             $('#duration_container_chipseq').html("<div id='duration_container_chipseq'></div>");
-            
-            
             var colorList = mydatasets_chipseq;
                 colorize = function(colorList) {
                     var container = document.getElementById('legend_container_chipseq');
 
                     for (var item in colorList) {
                         // console.log(item);
-                        
                         var boxContainer = document.createElement("DIV");
                         var box = document.createElement("DIV");
                         var label = document.createElement("DIV");
-                        var label_invisible = document.createElement("DIV");
-
-                        var gene_name = colorList[item]['label']
-                        label_invisible.className = "hidden click-toggle"
-                        label_invisible.innerHTML = `<span>${gene_name}</span>`
 
                         // dataset len
 
                         label.innerHTML = colorList[item]['label'] + "                                ";
-                        box.className = `box box-chipseq-legend-gene-${gene_name}`;
-                        
+                        box.className = "box";
                         box.style.backgroundColor = colorList[item]['backgroundColor'];
                         box.style.borderColor = colorList[item]['backgroundColor'];
                         box.style.textIndent = '20em';
-                        box.style.opacity = 1;
+
 
                         boxContainer.className = "box-contain";
-                        label.className = `label label-chipseq-legend-gene-${gene_name}`;
-                        label.style.textDecoration = ""
-
+                        label.className = "label";
                         boxContainer.appendChild(box);
                         boxContainer.appendChild(label);
-                        label.appendChild(label_invisible)
-                        box.appendChild(label_invisible)
 
                         container.appendChild(boxContainer);
 
@@ -1037,7 +1024,6 @@ $(document).ready(function () {
                         var boxContainer = document.createElement("DIV");
                         var box = document.createElement("DIV");
                         var label = document.createElement("DIV");
-                        var label_invisible = document.createElement("DIV");
 
                         // dataset len
                         var gene_name = colorList[item]['label']
@@ -1049,29 +1035,19 @@ $(document).ready(function () {
                         //     label.innerHTML +="&nbsp;&nbsp;<span class='tooltips_info' title='hello' data-tipso='" + explain_text + "'><i class='fas fa-question-circle'></i></span>"
                         // }
 
-                        box.className = `box box-chipseq-legend-gene-${gene_name}`;
-                       
+                        box.className = "box";
                         box.style.backgroundColor = colorList[item]['backgroundColor'];
                         box.style.borderColor = colorList[item]['backgroundColor'];
                         box.style.textIndent = '20em';
                         var width = Math.round(colorList[item]['data'].length / max_len * 120);
                         box.style.width = width+"px";
-                        box.style.opacity = 1;
 
                         boxContainer.className = "stats-contain";
-                        label.className = `label label-chipseq-legend-gene-${gene_name}`;
-                        label.style.textDecoration = ""
-
-                        label_invisible.className = "hidden click-toggle"
-                        label_invisible.innerHTML = `<span>${gene_name}</span>`
-
+                        label.className = "label";
                         boxContainer.appendChild(box);
                         boxContainer.appendChild(label);
-                        label.appendChild(label_invisible);
-                        box.appendChild(label_invisible);
 
                         container.appendChild(boxContainer);
-                        
 
                     }
 
@@ -1093,19 +1069,18 @@ $(document).ready(function () {
                         var boxContainer_t = document.createElement("DIV");
                         var box = document.createElement("DIV");
                         var label = document.createElement("DIV");
-                        var label_invisible = document.createElement("DIV");
 
                         if (colorList_dose[item] == -1) {
                             label.innerHTML = "FullMedium"
                         }
                         else {
-                            label.innerHTML = "CSS" + colorList_dose[item] + "nM";
+                            label.innerHTML = "CSS+" + colorList_dose[item] + "nM";
                         }
 
                         if (colorList_dose[item] == -1) {
-                            box.className = `circle-nosolid`;
+                            box.className = "circle-nosolid";
                         } else {
-                            box.className = `circle`;
+                            box.className = "circle";
                         }
 
                         
@@ -1124,23 +1099,13 @@ $(document).ready(function () {
                         box.style.width = size + "px";
 
                         box.style.textIndent = '40em';
-                        
 
-                        boxContainer2.className = `box-contain`;
+                        boxContainer2.className = "box-contain";
                         boxContainer2.style.width = "120px";
-                        
                         
                         boxContainer.className = "circle-contain";
                         boxContainer_t.className = "label-contain";
-
-                        label.className = `label chipseq-legend-condition-${label.innerHTML}`;
-                        label.style.textDecoration = ""
-
-                        label_invisible.className = "hidden click-toggle"
-                        label_invisible.innerHTML = `<span>${label.innerHTML}</span>`
-
-                        boxContainer2.appendChild(label_invisible);
-
+                        label.className = "label";
                         boxContainer.appendChild(box);
 
                         boxContainer2.appendChild(boxContainer);
@@ -1150,16 +1115,12 @@ $(document).ready(function () {
 
                         container.appendChild(boxContainer2);
 
-                        
-
                     }
                 };
                 colorize_dose(colorList_dose);
 
 
-                linkedToggleBoxLegend();
-                linkedToggleCircleLegend();
-              
+            /////////////////
             window.chipseq_mainChart = new Chart(ctx3, {
                 type: 'ScatterWithLine',
                 data: {

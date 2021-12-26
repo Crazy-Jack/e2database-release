@@ -5,6 +5,8 @@
 {% block content %}
 
 <div id="search-container" class="container" style="padding-top: 55px;">
+  <div class=".box"></div>
+  
   <div id="uploadarea" class="center horizon">
 
     <form id="fileform" action="/search/">
@@ -242,6 +244,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 <script src="{% static 'tools/js/search.js' %}"></script>
 <script src="{% static 'tools/js/select.js' %}"></script>
+<script src="{% static 'tools/js/legendSelection.js' %}"></script>
 <script src="{% static 'tools/js/tipso.js' %}"></script>
 <script type="text/javascript"> 
   function decodeHtml(html) {
