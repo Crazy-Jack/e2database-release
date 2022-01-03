@@ -682,7 +682,12 @@ function getaria() {
             hist_chipseq_data[index] += 1
         }
     }
-    return hist_chipseq_data;
+
+    return [{
+      label: 'Numbers', // delete numbers
+      data: hist_chipseq_data,
+      backgroundColor: 'green',
+    }]
   }
 
   function getBoxPlotDataFromDataset(mydatasets_chipseq) {
@@ -797,7 +802,8 @@ function getaria() {
     console.log("updatechartchipseq begin")
     console.log(new_datasets)
     var mydatasets_chipseq = new_datasets;
-    var hist_datasets_chipseq = getHistDataFromDataset(window.mydatasets_chipseq)
+    var hist_datasets_chipseq = getHistDataFromDataset(mydatasets_chipseq)
+    console.log(hist_datasets_chipseq)
     var boxplotdata_chipseq = getBoxPlotDataFromDataset(window.mydatasets_chipseq)
 
     Chart.helpers.each(Chart.instances, function(instance){
@@ -805,15 +811,20 @@ function getaria() {
 
       if ((instance.canvas.id == 'myChart_chipseq_distribution')) {
         // chnage chart js dataset
+        console.log(
+          hist_datasets_chipseq
+        )
+        console.log("this is hist_datasets_chipseq")
         instance.data.datasets = hist_datasets_chipseq;
+        instance.update();
       } else if ((instance.canvas.id == 'myChart_chipseq')) {
         instance.data.datasets = mydatasets_chipseq;
+        instance.update();
       } else if ((instance.canvas.id == 'myChart_chipseq_datasetdetail')) {
         instance.data.datasets = boxplotdata_chipseq;
-      } else {
-        return;
+        instance.update();
       }
-      instance.update();
+      
     });
   }
 

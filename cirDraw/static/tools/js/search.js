@@ -1198,6 +1198,8 @@ $(document).ready(function () {
                             myurl, "_blank");
                     },
 
+                    
+
 
                 plugins: {
                     legend: {
@@ -1218,7 +1220,7 @@ $(document).ready(function () {
 
                         }
                     }
-                    },
+                },
                     scales: {
                         y: {
                             title: {
@@ -1230,13 +1232,18 @@ $(document).ready(function () {
                                 callback: function(value, index, values) {
                                     return '' + value;
                                 }
-                            }
+                            },
+                            afterSetDimensions: (scale) => {
+                                scale.maxWidth = 50;
+                            },
                         },
                         x: {
                             title: {
                                 display: true,
                                 text: 'TSS position (kb)'
                             },
+                            min: -210,
+                            max: 210,
                             ticks: {
                                 // Include a dollar sign in the ticks
                                 callback: function(value, index, values) {
@@ -1282,6 +1289,7 @@ $(document).ready(function () {
                     }]
                   },
                   options: {
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: false,
@@ -1311,19 +1319,24 @@ $(document).ready(function () {
                                 }
                             }
                         },
-                      y: {
-                        min: 0,
-                        suggestedMax: Math.max(hist_chipseq_data),
-                        title: {
-                            display: true,
-                            text: 'Peak Numbers'
-                        },
-                        ticks: {
-                            // Include a dollar sign in the ticks
-                            callback: function(value, index, values) {
-                                return '' + value;
-                            }
-                        }
+                        y: {
+                            min: 0,
+                            suggestedMax: Math.max(hist_chipseq_data),
+                            title: {
+                                display: true,
+                                text: 'Peak Numbers'
+                            },
+                            ticks: {
+                                // Include a dollar sign in the ticks
+                                callback: function(value, index, values) {
+                                    var value_S = `${value}`
+                                    return value_S.padStart(4,'\t\n\r');
+                                },
+                                
+                            },
+                            afterSetDimensions: (scale) => {
+                                scale.maxWidth = 50;
+                            },
                         },
                     }
                   },
