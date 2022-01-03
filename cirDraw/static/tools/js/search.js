@@ -596,7 +596,7 @@ $(document).ready(function () {
 
 
 
-                document.getElementById("chart1-title-id").innerHTML = "<span><b>MicroArray Analysis</b></span></br><span>" + calculateDatasetStats(mydatasets, 0.5)+"</span>";
+                document.getElementById("chart1-title-id").innerHTML = "<span><h3>MicroArray Analysis</h3></span></br><span>" + calculateDatasetStats(mydatasets, 0.5)+"</span>";
                 console.log("microarray processing end time " + Date.now())
             }
             // create filter table
@@ -1088,7 +1088,7 @@ $(document).ready(function () {
                 colorize(colorList);
 
 
-                colorList_dose = [-1, 1, 10, 1000];
+                colorList_dose = [-1, 1, 10, 100];
                 colorize_dose = function(colorList_dose) {
                     var container = document.getElementById('duration_container_chipseq');
 
@@ -1121,9 +1121,9 @@ $(document).ready(function () {
                         }
                         else if (colorList_dose[item] <= 1.) {
                             var size = 4;
-                        } else if (colorList_dose[item] <= 100.) {
+                        } else if (colorList_dose[item] <= 10.) {
                             var size = 8;
-                        } else if (colorList_dose[item] <= 1000.) {
+                        } else if (colorList_dose[item] <= 100.) {
                             var size = 16;
                         }
 
@@ -1357,8 +1357,8 @@ $(document).ready(function () {
                 InitFilter();
                 // $('#chart-title-id').html('<div id="chart-title-id" style="text-align: center;">hello</div>');
 
-                document.getElementById("chart2-title-id").innerHTML = "<span><b>RNA-seq Analysis</b></span></br><span>" + calculateDatasetStats(mydatasets_rna, 2)+"</span>";
-                document.getElementById("chart3-title-id").innerHTML = "<span><b>ChIP-seq Analysis</b></span></br><span>";
+                document.getElementById("chart2-title-id").innerHTML = "<span><h3>RNA-seq Analysis</h3></span></br><span>" + calculateDatasetStats(mydatasets_rna, 2)+"</span>";
+                // document.getElementById("chart3-title-id").innerHTML = "<span><b>ChIP-seq Analysis</b></span></br><span>";
 
                 $('.tooltips_my').tipso({
                     // OPTIONS
@@ -1422,7 +1422,18 @@ $(document).ready(function () {
         // // console.log(input_html_genename);
         $("#ss_elem_list1").html(input_html_genename);
 
+        var input_html_genename = '';
+        for (let i = 0; i < window.mydatasets_chipseq.length; i++) {
+            var name = window.mydatasets_chipseq[i]['label'];
+            input_html_genename += "<li id='" + name + "_id'" + " role='option'>" + name + "</li>"
+        }
+        // input_html_genename += "<li id='all_id' role='option'>ALL</li>"
+        // // console.log(input_html_genename);
+        $("#ss_elem_list1_c").html(input_html_genename);
+
+
         $("#myfilterbox").removeClass("hidden");
+        $("#myfilterbox-chipseq").removeClass("hidden");
         
         // console.log("OGH33333");
 
@@ -1439,6 +1450,7 @@ $(document).ready(function () {
         document.getElementById("figure2").classList.add("hidden");
         document.getElementById("dashline3").classList.add("hidden");
         document.getElementById("figure3").classList.add("hidden");
+        document.getElementById("myfilterbox-chipseq").classList.add("hidden");
 
 
     }
@@ -1451,6 +1463,7 @@ $(document).ready(function () {
         document.getElementById("figure2").classList.remove("hidden");
         document.getElementById("dashline3").classList.remove("hidden");
         document.getElementById("figure3").classList.remove("hidden");
+        document.getElementById("myfilterbox-chipseq").classList.remove("hidden");
 
     }
 

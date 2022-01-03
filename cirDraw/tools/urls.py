@@ -8,29 +8,12 @@ urlpatterns = [
     # Render pages
     url(r'^$', views.render_search_page, name='tools'),
     url(r'^stats/$', views.render_stats_page, name='tools_stats'),
-    url(r'^display/(?P<md5>[0-9a-f-]+)$', views.render_display_page, name="render_display"),
 
     # Upload
-    url(r'^upload/$', views.save_to_files, name='upload&save'),
     url(r'^search/$', views.search_indb, name='search_indb'),
-    url(r'^run/$', views.run_call, name='run'),
 
     # check statistics
     url(r'^get_stats/$', views.get_stats, name='get_stats'),
-
-    # Check Status
-    url(r'^statusfile/$', views.check_status),
-    # Ajax call functions For Displays
-    url(r'^display/chrLen/$', views.handle_chrLen, name="tools_chrLen"),
-    url(r'^display/density/$', views.handle_density, name="tools_density"),
-    url(r'^display/circrnas/$', views.handle_circrnas, name="tools_circRNAs"),
-    url(r'^display/genes/$', views.handle_genes, name="tools_genes"),
-    url(r'^display/downloadresult/$', views.download_UserFile, name="tools_downloadresult"),
-
-    # charts
-    url(r'^display/lenChart_URL/$', views.lenChart),
-    # TopList
-    url(r'^display/toplist/$', views.toplist),
 ]
 
 if settings.DEBUG:

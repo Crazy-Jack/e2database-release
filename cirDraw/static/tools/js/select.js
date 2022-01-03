@@ -476,13 +476,22 @@ function getaria() {
    *  The click event object
    */
 
-  function iselementfocused(element_id) {
-    for (var i in window.focus_set) {
-      for (var j in window.focus_set[i]) {
-        if (window.focus_set[i][j] == element_id) {
+  function iselementfocused(element_id, focus_set=window.focus_set) {
+    for (var i in focus_set) {
+      for (var j in focus_set[i]) {
+        if (focus_set[i][j] == element_id) {
           return true;
         }
       }
+    }
+  }
+
+  function focusSet(id) {
+    console.log("myid " + id)
+    if ((id == 'ss_elem_list1_c') || (id == 'ss_elem_list2_c')) {
+      return 'focus_chipseq';
+    } else {
+      return 'focus_micro_rnaseq';
     }
   }
 
@@ -490,12 +499,15 @@ function getaria() {
     if (evt.target.getAttribute('role') !== 'option') {
       return;
     }
-    
-    // console.log("evt.target");
-    // console.log(evt.target.id);
-    // console.log(window.mydatasets);
+    console.log("parent")
+    console.log(evt.target.parentNode.id)
+    console.log("parent")
 
-    if (iselementfocused(evt.target.id) ) {
+    var focus_set_type = focusSet(evt.target.parentNode.id)
+    
+    
+    
+    if (iselementfocused(evt.target.id) || iselementfocused(evt.target.id, window.focus_set_chipseq)) {
       // defocus and modify the global set
       this.defocusItem(evt.target);
 
@@ -510,7 +522,14 @@ function getaria() {
     this.updateScroll();
 
     // update chart based on the global filter condition
-    this.updateChart();
+    console.log("focus_set_type " + focus_set_type)
+    if (focus_set_type == 'focus_micro_rnaseq') {
+      this.updateChart();
+    } else if (focus_set_type == 'focus_chipseq') {
+      this.updateChartChipseq();
+    }
+    
+    // this.updateChipseqChart();
 
     if (this.multiselectable && evt.shiftKey) {
       this.selectRange(this.startRangeIndex, evt.target);
@@ -525,6 +544,17 @@ function getaria() {
         for (var j in filter_set[i]) {
           var id = filter_set[i][j]
           filter_set_data[i].push(document.getElementById(id).innerHTML)
+        }
+      }
+    return filter_set_data;
+  };
+
+  function convertFocusSetContentChipseq (filter_set) {
+    var filter_set_data = {'cellline_chipseq': [], 'condition_chipseq': []}
+    for (var i in filter_set) {
+        for (var j in filter_set[i]) {
+          var id = filter_set[i][j]
+          filter_set_data[i].push(document.getElementById(id).innerHTML.split(' ').join(''))
         }
       }
     return filter_set_data;
@@ -637,8 +667,155 @@ function getaria() {
     });
   }
 
+  function getHistDataFromDataset(mydatasets_chipseq) {
+    var hist_chipseq_data = Array(40).fill(0);
+    for (var i in mydatasets_chipseq) {
+        for (var j in mydatasets_chipseq[i].data) {
+            var dataij = mydatasets_chipseq[i].data[j];
+            var location = dataij.tss;
+            var index = Math.round((location + 200) / 10)
+            if (index > 39) {
+                index = 39;
+            } else if (index < 0) {
+                index = 0;
+            }
+            hist_chipseq_data[index] += 1
+        }
+    }
+    return hist_chipseq_data;
+  }
+
+  function getBoxPlotDataFromDataset(mydatasets_chipseq) {
+    var data_boxplotData = Array(4).fill([]);
 
 
+        var boxlabel = [];
+        for (var i in mydatasets_chipseq) {
+            boxlabel.push(mydatasets_chipseq[i].label);
+
+
+            var dosecount = Array(4).fill(0);
+            for (var j in mydatasets_chipseq[i].data) {
+                var dataij = mydatasets_chipseq[i].data[j];
+                var dose = dataij.dose;
+                if (dataij.multi_duration) {
+                    dosecount[3] += 1;
+                } else if (dose <= 1) {
+                    dosecount[0] += 1;
+                } else if (dose <= 100) {
+                    dosecount[1] += 1;
+                } else if (dose <= 1000) {
+                    dosecount[2] += 1;
+                }
+            }
+            data_boxplotData[i] = dosecount;
+        }
+        var colors_boxplot = [];
+        for (var i in mydatasets_chipseq) {
+            colors_boxplot.push(mydatasets_chipseq[i].backgroundColor)
+        }
+
+        var boxplotData = {
+            // define label tree
+            labels: boxlabel,
+            datasets: [{
+            label: boxlabel,
+            backgroundColor: "white",
+            borderColor: colors_boxplot,
+            borderWidth: 2,
+            outlierColor: colors_boxplot,
+            padding: 0,
+            itemRadius: [0, 1, 2, 3],
+            data: data_boxplotData,
+            }]
+        };
+
+        return boxplotData;
+  }
+
+  function filterDatasetChipseq (datasets, filter_set) {
+    // console.log("filter set")
+    // console.log(filter_set)
+    // TODO: modify filter dataset to match
+
+    var filter_set_content = convertFocusSetContentChipseq(filter_set);
+
+    console.log(filter_set_content)
+
+    // console.log(filter_set_content);
+    var new_datasets = []
+    // filter the dataset
+    for (let i=0; i < datasets.length; i++) {
+      var new_data_i = [];
+      var new_pointStyle_i = [];
+      var new_radius_i = [];
+      console.log("datasets[i].label)")
+      console.log(datasets[i].label)
+      // console.log("datasets[i].label " + datasets[i].label)
+      if (filter_set_content['cellline_chipseq'].includes(datasets[i].label) || filter_set_content['cellline_chipseq'].length == 0) {
+        // console.log('inclue ' + datasets[i].label)
+        // filter out other fields
+        for (var j in datasets[i].data) {
+          var dose_ij
+          var multi_duration = datasets[i].data[j]['multi_duration']
+          if (multi_duration) {
+            dose_ij = "FullMedium"
+          } else {
+            dose_ij = "CSS" + datasets[i].data[j]['dose'] + "nM"
+          }
+
+          console.log(dose_ij)
+
+          // console.log("inclue duration_ij " + duration_ij)
+          if (filter_set_content['condition_chipseq'].includes(dose_ij) || filter_set_content['condition_chipseq'].length == 0) {
+              new_data_i.push(datasets[i].data[j])
+              new_pointStyle_i.push(datasets[i].pointStyle[j]);
+              new_radius_i.push(datasets[i].radius[j]);
+            }
+        }
+
+        var new_dataset_i = JSON.parse(JSON.stringify(datasets[i]));
+        new_dataset_i.data = new_data_i;
+        new_dataset_i.pointStyle = new_pointStyle_i;
+        new_dataset_i.radius = new_radius_i;
+
+        new_datasets.push(new_dataset_i)
+       
+      }
+    } 
+
+    console.log(new_datasets)
+    console.log("new dataset")
+    return new_datasets;
+  }
+
+
+
+  aria.Listbox.prototype.updateChartChipseq = function (select_name) {
+    // console.log("Inside update char")
+    var new_datasets = filterDatasetChipseq(window.mydatasets_chipseq, window.focus_set_chipseq);
+    console.log("updatechartchipseq begin")
+    console.log(new_datasets)
+    var mydatasets_chipseq = new_datasets;
+    var hist_datasets_chipseq = getHistDataFromDataset(window.mydatasets_chipseq)
+    var boxplotdata_chipseq = getBoxPlotDataFromDataset(window.mydatasets_chipseq)
+
+    Chart.helpers.each(Chart.instances, function(instance){
+      console.log(instance.canvas.id);
+
+      if ((instance.canvas.id == 'myChart_chipseq_distribution')) {
+        // chnage chart js dataset
+        instance.data.datasets = hist_datasets_chipseq;
+      } else if ((instance.canvas.id == 'myChart_chipseq')) {
+        instance.data.datasets = mydatasets_chipseq;
+      } else if ((instance.canvas.id == 'myChart_chipseq_datasetdetail')) {
+        instance.data.datasets = boxplotdata_chipseq;
+      } else {
+        return;
+      }
+      instance.update();
+    });
+  }
 
 
   /**
@@ -692,16 +869,26 @@ function getaria() {
 
     if (this.listboxNode.id == 'ss_elem_list1') {
       var variable = 'cellline';
+      var focus_set_var = 'focus_set';
     } else if (this.listboxNode.id == 'ss_elem_list2') { 
       var variable = 'duration';
+      var focus_set_var = 'focus_set';
     } else if (this.listboxNode.id == 'ss_elem_list3') { 
       var variable = 'dose';
+      var focus_set_var = 'focus_set';
     } else if (this.listboxNode.id == 'ss_elem_list4') { 
       var variable = 'adj_p_value';
+      var focus_set_var = 'focus_set';
+    } else if (this.listboxNode.id == 'ss_elem_list1_c') {
+      var variable = 'cellline_chipseq';
+      var focus_set_var = 'focus_set_chipseq';
+    } else if (this.listboxNode.id == 'ss_elem_list2_c') {
+      var variable = 'condition_chipseq';
+      var focus_set_var = 'focus_set_chipseq';
     }
 
-    window.focus_set[variable] = window.focus_set[variable].filter(item => item !== element.id)
-
+    window[focus_set_var][variable] = window[focus_set_var][variable].filter(item => item !== element.id)
+    console.log(window[focus_set_var])
   };
 
   /**
@@ -716,14 +903,28 @@ function getaria() {
     // add focus item into global filter criterion
     if (this.listboxNode.id == 'ss_elem_list1') {
       var variable = 'cellline';
+      window.focus_set[variable].push(element.id);
     } else if (this.listboxNode.id == 'ss_elem_list2') { 
       var variable = 'duration';
+      window.focus_set[variable].push(element.id);
     } else if (this.listboxNode.id == 'ss_elem_list3') { 
       var variable = 'dose';
+      window.focus_set[variable].push(element.id);
     } else if (this.listboxNode.id == 'ss_elem_list4') { 
       var variable = 'adj_p_value';
-    }
-    window.focus_set[variable].push(element.id);
+      window.focus_set[variable].push(element.id);
+    } else if (this.listboxNode.id == 'ss_elem_list1_c') {
+      var variable = 'cellline_chipseq';
+      window.focus_set_chipseq[variable].push(element.id);
+      console.log(window.focus_set_chipseq)
+    } else if (this.listboxNode.id == 'ss_elem_list2_c') {
+      var variable = 'condition_chipseq';
+      window.focus_set_chipseq[variable].push(element.id);
+      console.log(window.focus_set_chipseq)
+    } else {console.log("this.listboxNode.id: " + this.listboxNode.id + " not recognized!")}
+    
+    console.log(element.id)
+    
 
     if (!this.multiselectable) {
       element.setAttribute('aria-selected', 'true');
@@ -1039,14 +1240,24 @@ var aria2 = getaria();
 var aria3 = getaria();
 var aria4 = getaria();
 
+
+var aria1_c = getaria();
+var aria2_c = getaria();
+var aria3_c = getaria();
+var aria4_c = getaria();
+
 window.current_focus = null;
 window.focus_set = {'cellline': [], 'duration': [], 'dose': [], 'adj_p_value': []}
+window.focus_set_chipseq = {'cellline_chipseq': [], 'condition_chipseq': []}
 window.addEventListener('load', function () {
 
   new aria1.Listbox(document.getElementById('ss_elem_list1'));
   new aria2.Listbox(document.getElementById('ss_elem_list2'));
   new aria3.Listbox(document.getElementById('ss_elem_list3'));
   new aria4.Listbox(document.getElementById('ss_elem_list4'));
+
+  new aria1_c.Listbox(document.getElementById('ss_elem_list1_c'));
+  new aria2_c.Listbox(document.getElementById('ss_elem_list2_c'));
   // new aria4.Listbox(document.getElementById('ss_elem_list4'));
 });
 
