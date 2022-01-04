@@ -26,7 +26,7 @@
   
 <div id="myfilterbox" class="listbox-area hidden">
   <div style="display: flex;">
-    <div style="padding-left: 5em;"></div>
+    <div style="padding-left: 100px;"></div>
     <div>
       <span id="ss_elem" class="listbox-label"><b>Filtering:</b></span>
       <div style="display:flex;">
@@ -61,7 +61,7 @@
             <li id="ss_elem_Og" role="option">Oganesson</li>
           </ul>
         </div>
-        <div style="font-size:30px; padding:15px; border-right: 1px dashed black;height: 25vh;">&nbsp;</div>
+        <div style="font-size:30px; padding:15px; border-right: 1px dashed black;height: 200px;">&nbsp;</div>
         <div style="font-size:30px; padding:15px; ">&nbsp;</div>
         <div>
           <span>Duration:</span>
@@ -80,7 +80,7 @@
           </ul>
         </div>
   
-        <div style="font-size:30px; padding:15px; border-right: 1px dashed black;height: 25vh;">&nbsp;</div>
+        <div style="font-size:30px; padding:15px; border-right: 1px dashed black;height: 200px;">&nbsp;</div>
         <div style="font-size:30px; padding:15px; ">&nbsp;</div>
         <div>
           <span>Dose:</span>
@@ -91,7 +91,7 @@
           </ul>
         </div>
   
-        <div style="font-size:30px; padding:15px; border-right: 1px dashed black;height: 25vh;">&nbsp;</div>
+        <div style="font-size:30px; padding:15px; border-right: 1px dashed black;height: 200px;">&nbsp;</div>
         <div style="font-size:30px; padding:15px; ">&nbsp;</div>
         <div>
           <span>Adjusted p-value (<)</span>
@@ -103,7 +103,7 @@
         </div>
       </div>
     </div>
-    <div style="padding-right: 5em;"></div>
+    <div style="padding-right: 100px;"></div>
   </div>
   
 </div>
@@ -119,11 +119,11 @@
   <!-- <div id="dashline1"></div> -->
   <div id="figure1" class="horizon-flex-contain">
       <div class="chart-container">
-        <div id="chart1-title-id" style="text-align: center;"></div>
-        <canvas id="myChart"></canvas> 
+        <div id="chart1-title-id" style="text-align: center; margin-top: 1em;"></div>
+        <canvas id="myChart" width="663" height="350"></canvas> 
         <a id="download1"
           href=""
-          class="btn btn-primary float-right bg-flat-color-1"
+          class="btn btn-primary float-right bg-flat-color-1 hidden"
           title="Descargar Gráfico">
 
                   <!-- Download Icon -->
@@ -133,26 +133,23 @@
 
       <div>
         <div style="height: 5vh;"></div>
-        <div style="display: flex; ">
+        <div style="display: flex; margin-left: 3em;">
           <div id="duration_container"></div>
           <div id="legend_container"></div>
           <div id="legend_stats"></div>
         </div>
       </div>
-      
-    
-    
   </div>
   
   <div id="dashline2"></div>
 
   <div id="figure2" class="horizon-flex-contain">
     <div class="chart-container">
-      <div id="chart2-title-id" style="text-align: center;"></div>
-      <canvas id="myChart_rna"></canvas> 
+      <div id="chart2-title-id" style="text-align: center; margin-top: 1em;"></div>
+      <canvas id="myChart_rna" width="663" height="350"></canvas> 
       <a id="download2"
           href=""
-          class="btn btn-primary float-right bg-flat-color-1"
+          class="btn btn-primary float-right bg-flat-color-1 hidden"
           title="Descargar Gráfico">
 
                   <!-- Download Icon -->
@@ -162,7 +159,7 @@
 
     <div> 
       <div style="height: 5vh;"></div>
-      <div style="display: flex" style="height:55vh;">
+      <div style="display: flex;margin-left: 3em;">
         <div id="duration_container_rna"></div>
         <div id="legend_container_rna"></div>
         <div id="legend_stats_rna"></div>
@@ -174,64 +171,72 @@
 
 
   <div id="dashline3"></div>
-  <div style="margin-left: 11em;">
+  <div style="margin-left: 11em; margin-top: 2em;">
     <h3>ChIP-seq Analysis</h3>
   </div>
-  <div id="myfilterbox-chipseq" class="listbox-area-chipseq hidden">
+  <div style="display: flex;">
+
+    <div id="myfilterbox-chipseq" class="listbox-area-chipseq hidden" style="width: 650px;">
+
+      <div style="display: flex;">
+        <div style="padding-left: 1em;"></div>
+        <div>
+          <div id="ss_elem_c" class="listbox-label"><b>Filtering for ChIP-seq:</b></div>
+          <div style="display:flex;">
+            <div> 
+              <span>Cell Line:</span>
+              <ul class="ss_elem_list_chipseq" id="ss_elem_list1_c" tabindex="0" role="listbox" aria-labelledby="ss_elem"> 
+                <li id="ss_elem_Np_c" role="option">Neptunium</li>
+               
+                <li id="ss_elem_Og_c" role="option">Oganesson</li>
+              </ul>
+            </div>
+            <div style="font-size:30px; padding:15px; border-right: 1px dashed black;height: 200px;">&nbsp;</div>
+            <div style="font-size:30px; padding:15px; ">&nbsp;</div>
+            <div>
+              <span>Duration:</span>
+              <ul class="ss_elem_list_chipseq" id="ss_elem_list2_c" tabindex="0" role="listbox" aria-labelledby="ss_elem"> 
+                <li id="ss_elem_2_1_c" role="option">Full Medium</li>
+                <li id="ss_elem_2_2_c" role="option">CSS 1nM</li>
+                <li id="ss_elem_2_3_c" role="option">CSS 10nM</li>
+                <li id="ss_elem_2_4_c" role="option">CSS 100nM</li>
+              </ul>
+            </div>
     
-    
-    <div style="display: flex;">
-      <div style="padding-left: 1em;"></div>
-      <div>
-        <div id="ss_elem_c" class="listbox-label"><b>Filtering for ChIP-seq:</b></div>
-        <div style="display:flex;">
-          <div> 
-            <span>Cell Line:</span>
-            <ul class="ss_elem_list_chipseq" id="ss_elem_list1_c" tabindex="0" role="listbox" aria-labelledby="ss_elem"> 
-              <li id="ss_elem_Np_c" role="option">Neptunium</li>
-             
-              <li id="ss_elem_Og_c" role="option">Oganesson</li>
-            </ul>
           </div>
-          <div style="font-size:30px; padding:15px; border-right: 1px dashed black;height: 30vh;">&nbsp;</div>
-          <div style="font-size:30px; padding:15px; ">&nbsp;</div>
-          <div>
-            <span>Duration:</span>
-            <ul class="ss_elem_list_chipseq" id="ss_elem_list2_c" tabindex="0" role="listbox" aria-labelledby="ss_elem"> 
-              <li id="ss_elem_2_1_c" role="option">Full Medium</li>
-              <li id="ss_elem_2_2_c" role="option">CSS 1nM</li>
-              <li id="ss_elem_2_3_c" role="option">CSS 10nM</li>
-              <li id="ss_elem_2_4_c" role="option">CSS 100nM</li>
-            </ul>
-          </div>
-  
         </div>
+        <div style="padding-right: 1em;"></div>
       </div>
-      <div style="padding-right: 1em;"></div>
+      
     </div>
-    
+
+    <div id="boxplot_chipseq_canvas" style="margin-right: 15em;">
+      <div style="height: 1vh;"></div>
+      <canvas id="myChart_chipseq_datasetdetail"></canvas> 
+    </div>
   </div>
+ 
 
 
   <div id="figure3" class="horizon-flex-contain">
-    <div id="chart-container3" class="chart-container" style="position: relative; height:80vh; width:45vw">
-      <div id="chart3-title-id" style="text-align: center; width: 45vw"></div>
+    <div id="chart-container3" class="chart-container" style="width: 650px;height: 600px;">
+      <div id="chart3-title-id" style="text-align: center;"></div>
   
       <div style="display: flex">
-        <!-- <div style="width: 6px;"></div> -->
-        <div style="height: 15vh; width:43vw">
-          <canvas id="myChart_chipseq_distribution"></canvas> 
+        <!-- <div style="width: 1em;"></div> -->
+        <div>
+          <canvas id="myChart_chipseq_distribution" width="650" height="120"></canvas> 
         </div>
       </div>
       
       
-      <div id="chipseq-big" style="display: flex">
+      <div id="chipseq-big" style="display: flex;">
         <!-- <div style="width: 6px;"></div> -->
-        <div style="height: 44.5vh;width:45vw;">
-          <canvas id="myChart_chipseq"></canvas> 
+        <div style="height: 44.5vh;" >
+          <canvas id="myChart_chipseq" width="663" height="420"></canvas>
           <a id="download3"
           href=""
-          class="btn btn-primary float-right bg-flat-color-1"
+          class="btn btn-primary float-right bg-flat-color-1 hidden"
           title="Descargar Gráfico">
 
                   <!-- Download Icon -->
@@ -244,7 +249,7 @@
     </div>
     <div style="width: 15vw;">
       <div style="height: 5vh;"></div>
-      <div id="chipseq_legend_container" style="display: flex;">
+      <div id="chipseq_legend_container" style="display: flex; margin-left: 3em;">
         <div id="duration_container_chipseq"></div>
         <div style="width: 20vw;" id="legend_container_chipseq"></div>
         <div style="width: 20vw;" id="legend_stats_chipseq"></div>
@@ -253,10 +258,7 @@
       <div> 
         <div style="display: flex">
           <div style="width: 30vw"> </div>
-          <div id="boxplot_chipseq_canvas">
-            <div style="height: 1vh;"></div>
-            <canvas id="myChart_chipseq_datasetdetail"></canvas> 
-          </div>
+          
         </div>
         <!-- <div style="height: 5%"></div> -->
       </div>
@@ -287,7 +289,7 @@
 <script src="https://unpkg.com/@sgratzl/chartjs-chart-boxplot@3"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot@2.4.0/build/Chart.BoxPlot.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
 <script src="{% static 'tools/js/search.js' %}"></script>
 <script src="{% static 'tools/js/select.js' %}"></script>
 <script src="{% static 'tools/js/legendSelection.js' %}"></script>

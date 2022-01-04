@@ -1,3 +1,7 @@
+.hidden {
+  display: none;
+}
+
 .listbox-area {
   display: grid;
   grid-gap: 2em;
@@ -10,6 +14,8 @@
   margin-top: 1em;
 }
 
+
+
 .listbox-area-chipseq {
   display: grid;
   grid-gap: 2em;
@@ -17,8 +23,8 @@
   padding: 20px;
   padding-top: 10px;
   border: 1px solid #aaa;
-  margin-left: 1em;
-  margin-right: 29em;
+  margin-left: 10px;
+  margin-right: 10px;
   border-radius: 4px;
   background: #eee;
   margin-top: 1em;

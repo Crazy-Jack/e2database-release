@@ -487,7 +487,7 @@ function getaria() {
   }
 
   function focusSet(id) {
-    console.log("myid " + id)
+    // //console.log("myid " + id)
     if ((id == 'ss_elem_list1_c') || (id == 'ss_elem_list2_c')) {
       return 'focus_chipseq';
     } else {
@@ -499,9 +499,9 @@ function getaria() {
     if (evt.target.getAttribute('role') !== 'option') {
       return;
     }
-    console.log("parent")
-    console.log(evt.target.parentNode.id)
-    console.log("parent")
+    //console.log("parent")
+    //console.log(evt.target.parentNode.id)
+    //console.log("parent")
 
     var focus_set_type = focusSet(evt.target.parentNode.id)
     
@@ -522,7 +522,7 @@ function getaria() {
     this.updateScroll();
 
     // update chart based on the global filter condition
-    console.log("focus_set_type " + focus_set_type)
+    //console.log("focus_set_type " + focus_set_type)
     if (focus_set_type == 'focus_micro_rnaseq') {
       this.updateChart();
     } else if (focus_set_type == 'focus_chipseq') {
@@ -565,8 +565,8 @@ function getaria() {
   }
   
   function filterDataset (datasets, filter_set) {
-    // console.log("filter set")
-    // console.log(filter_set)
+    // //console.log("filter set")
+    // //console.log(filter_set)
 
     var filter_set_content = convertFocusSetContent(filter_set);
     // get max pvalue
@@ -581,7 +581,7 @@ function getaria() {
       }
     }
 
-    // console.log(filter_set_content);
+    // //console.log(filter_set_content);
     var new_datasets = []
     // filter the dataset
     for (let i=0; i < datasets.length; i++) {
@@ -589,22 +589,22 @@ function getaria() {
       var new_pointStyle_i = [];
       var new_radius_i = [];
       
-      // console.log("datasets[i].label " + datasets[i].label)
+      // //console.log("datasets[i].label " + datasets[i].label)
       if (filter_set_content['cellline'].includes(datasets[i].label) || filter_set_content['cellline'].length == 0) {
-        // console.log('inclue ' + datasets[i].label)
+        // //console.log('inclue ' + datasets[i].label)
         // filter out other fields
         for (var j in datasets[i].data) {
           var duration_ij = datasets[i].data[j]['duration']
           duration_ij = discretizeDuration(duration_ij)
-          // console.log("duration_ij" + duration_ij)
+          // //console.log("duration_ij" + duration_ij)
           if (filter_set_content['duration'].includes(duration_ij+" hour") || filter_set_content['duration'].length == 0) {
             var dose_ij = datasets[i].data[j]['dose']
-            // console.log("inclue duration_ij " + duration_ij)
+            // //console.log("inclue duration_ij " + duration_ij)
             if (filter_set_content['dose'].includes(dose_ij+" nM") || filter_set_content['dose'].length == 0) {
               var adj_logp_value_ij = datasets[i].data[j]['logp']
-              // console.log("inclue dose " + dose_ij)
+              // //console.log("inclue dose " + dose_ij)
               if (filter_set_content['adj_p_value'].includes('ALL') || filter_set_content['adj_p_value'].length == 0 || (Math.pow(10, -adj_logp_value_ij) < max_p_value)) {
-                // console.log("inclue adj_p_value " + adj_logp_value_ij + "  Math.pow(10, -adj_logp_value_ij) (" + Math.pow(10, -adj_logp_value_ij) + ")")
+                // //console.log("inclue adj_p_value " + adj_logp_value_ij + "  Math.pow(10, -adj_logp_value_ij) (" + Math.pow(10, -adj_logp_value_ij) + ")")
                 new_data_i.push(datasets[i].data[j])
                 new_pointStyle_i.push(datasets[i].pointStyle[j]);
                 new_radius_i.push(datasets[i].radius[j]);
@@ -623,7 +623,7 @@ function getaria() {
       }
     } 
 
-    // console.log(new_datasets)
+    // //console.log(new_datasets)
 
     return new_datasets;
   }
@@ -633,12 +633,12 @@ function getaria() {
    * @param {*} evt 
    */
   aria.Listbox.prototype.updateChart = function (select_name) {
-    // console.log("Inside update char")
-    // console.log(this.listboxNode.id)
+    // //console.log("Inside update char")
+    // //console.log(this.listboxNode.id)
     
 
     Chart.helpers.each(Chart.instances, function(instance){
-      // console.log(instance.canvas.id);
+      // //console.log(instance.canvas.id);
 
       if (instance.canvas.id == 'myChart'){
         var raw_datasets = window.mydatasets;
@@ -661,7 +661,7 @@ function getaria() {
 
       // update chart title
 
-      document.getElementById(chart_title_id).innerHTML = "<span><b>"+ base_title + "</b></span></br><span>" + calculateDatasetStats(new_datasets, fold_change_threshold)+"</span>";
+      document.getElementById(chart_title_id).innerHTML = "<span><h3>"+ base_title + "</h3></span></br><span>" + calculateDatasetStats(new_datasets, fold_change_threshold)+"</span>";
       // instance.options.plugins.title.text = base_title + ' (' + new_datasets.length + ')';
       instance.update();
     });
@@ -739,26 +739,27 @@ function getaria() {
   }
 
   function filterDatasetChipseq (datasets, filter_set) {
-    // console.log("filter set")
-    // console.log(filter_set)
+    // //console.log("filter set")
+    // //console.log(filter_set)
     // TODO: modify filter dataset to match
 
     var filter_set_content = convertFocusSetContentChipseq(filter_set);
 
-    console.log(filter_set_content)
+    //console.log(filter_set_content)
 
-    // console.log(filter_set_content);
+    // //console.log(filter_set_content);
     var new_datasets = []
     // filter the dataset
     for (let i=0; i < datasets.length; i++) {
       var new_data_i = [];
       var new_pointStyle_i = [];
       var new_radius_i = [];
-      console.log("datasets[i].label)")
-      console.log(datasets[i].label)
-      // console.log("datasets[i].label " + datasets[i].label)
+      var new_border_i = [];
+      //console.log("datasets[i].label)")
+      //console.log(datasets[i].label)
+      // //console.log("datasets[i].label " + datasets[i].label)
       if (filter_set_content['cellline_chipseq'].includes(datasets[i].label) || filter_set_content['cellline_chipseq'].length == 0) {
-        // console.log('inclue ' + datasets[i].label)
+        // //console.log('inclue ' + datasets[i].label)
         // filter out other fields
         for (var j in datasets[i].data) {
           var dose_ij
@@ -769,13 +770,16 @@ function getaria() {
             dose_ij = "CSS" + datasets[i].data[j]['dose'] + "nM"
           }
 
-          console.log(dose_ij)
+          
 
-          // console.log("inclue duration_ij " + duration_ij)
+          // //console.log("inclue duration_ij " + duration_ij)
           if (filter_set_content['condition_chipseq'].includes(dose_ij) || filter_set_content['condition_chipseq'].length == 0) {
+              //console.log(dose_ij)
               new_data_i.push(datasets[i].data[j])
               new_pointStyle_i.push(datasets[i].pointStyle[j]);
               new_radius_i.push(datasets[i].radius[j]);
+              new_border_i.push(datasets[i].borderColor[j])
+             
             }
         }
 
@@ -783,45 +787,44 @@ function getaria() {
         new_dataset_i.data = new_data_i;
         new_dataset_i.pointStyle = new_pointStyle_i;
         new_dataset_i.radius = new_radius_i;
+        new_dataset_i.borderColor = new_border_i;
 
         new_datasets.push(new_dataset_i)
        
       }
     } 
 
-    console.log(new_datasets)
-    console.log("new dataset")
+    //console.log(new_datasets)
+    //console.log("new dataset")
     return new_datasets;
   }
 
 
 
   aria.Listbox.prototype.updateChartChipseq = function (select_name) {
-    // console.log("Inside update char")
+    // //console.log("Inside update char")
     var new_datasets = filterDatasetChipseq(window.mydatasets_chipseq, window.focus_set_chipseq);
-    console.log("updatechartchipseq begin")
-    console.log(new_datasets)
+    //console.log("updatechartchipseq begin")
+    //console.log(new_datasets)
     var mydatasets_chipseq = new_datasets;
     var hist_datasets_chipseq = getHistDataFromDataset(mydatasets_chipseq)
-    console.log(hist_datasets_chipseq)
-    var boxplotdata_chipseq = getBoxPlotDataFromDataset(window.mydatasets_chipseq)
+    //console.log(hist_datasets_chipseq)
+    var boxplotdata_chipseq = getBoxPlotDataFromDataset(mydatasets_chipseq)
 
     Chart.helpers.each(Chart.instances, function(instance){
-      console.log(instance.canvas.id);
+      //console.log(instance.canvas.id);
 
       if ((instance.canvas.id == 'myChart_chipseq_distribution')) {
         // chnage chart js dataset
-        console.log(
-          hist_datasets_chipseq
-        )
-        console.log("this is hist_datasets_chipseq")
+        
+        //console.log("this is hist_datasets_chipseq")
         instance.data.datasets = hist_datasets_chipseq;
         instance.update();
       } else if ((instance.canvas.id == 'myChart_chipseq')) {
         instance.data.datasets = mydatasets_chipseq;
         instance.update();
       } else if ((instance.canvas.id == 'myChart_chipseq_datasetdetail')) {
-        instance.data.datasets = boxplotdata_chipseq;
+        instance.data = boxplotdata_chipseq;
         instance.update();
       }
       
@@ -899,7 +902,7 @@ function getaria() {
     }
 
     window[focus_set_var][variable] = window[focus_set_var][variable].filter(item => item !== element.id)
-    console.log(window[focus_set_var])
+    //console.log(window[focus_set_var])
   };
 
   /**
@@ -910,7 +913,7 @@ function getaria() {
    *  The element to focus
    */
   aria.Listbox.prototype.focusItem = function (element) {
-    // console.log(this.listboxNode.id)
+    // //console.log(this.listboxNode.id)
     // add focus item into global filter criterion
     if (this.listboxNode.id == 'ss_elem_list1') {
       var variable = 'cellline';
@@ -927,14 +930,16 @@ function getaria() {
     } else if (this.listboxNode.id == 'ss_elem_list1_c') {
       var variable = 'cellline_chipseq';
       window.focus_set_chipseq[variable].push(element.id);
-      console.log(window.focus_set_chipseq)
+      //console.log(window.focus_set_chipseq)
     } else if (this.listboxNode.id == 'ss_elem_list2_c') {
       var variable = 'condition_chipseq';
       window.focus_set_chipseq[variable].push(element.id);
-      console.log(window.focus_set_chipseq)
-    } else {console.log("this.listboxNode.id: " + this.listboxNode.id + " not recognized!")}
+      //console.log(window.focus_set_chipseq)
+    } else {
+      console.log("this.listboxNode.id: " + this.listboxNode.id + " not recognized!")
+    }
     
-    console.log(element.id)
+    //console.log(element.id)
     
 
     if (!this.multiselectable) {

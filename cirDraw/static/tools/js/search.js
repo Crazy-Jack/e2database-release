@@ -54,17 +54,9 @@ $(document).ready(function () {
     }
     function display_box (mydatasets_chipseq) {
 
-        // dynamic box plot
-                
-        var chipseq_legend_height = document.getElementById("chipseq_legend_container").getBoundingClientRect().bottom;
-                
-        var chipseq_main_height = document.getElementById("myChart_chipseq").getBoundingClientRect().bottom;
-        console.log("CHIPSEQ LEGEND HEIGHT " + chipseq_legend_height)
-        console.log("CHIPSEQ chipseq_main_height " + chipseq_main_height);
         
-        var boxplot_chipseq_canvas_height = chipseq_main_height - chipseq_legend_height;
-        boxplot_chipseq_canvas_height = 38;
-        document.getElementById('boxplot_chipseq_canvas').setAttribute("style","height:" + boxplot_chipseq_canvas_height + "vh");
+        boxplot_chipseq_canvas_height = 300;
+        document.getElementById('boxplot_chipseq_canvas').setAttribute("style","height:" + boxplot_chipseq_canvas_height + "px");
 
         var data_boxplotData = Array(4).fill([]);
 
@@ -95,21 +87,21 @@ $(document).ready(function () {
             colors_boxplot.push(mydatasets_chipseq[i].backgroundColor)
         }
 
-        console.log("boxplot")
-        console.log(data_boxplotData)
+        //console.log("boxplot")
+        //console.log(data_boxplotData)
 
         var boxplotData = {
             // define label tree
             labels: boxlabel,
             datasets: [{
-            label: boxlabel,
-            backgroundColor: "white",
-            borderColor: colors_boxplot,
-            borderWidth: 2,
-            outlierColor: colors_boxplot,
-            padding: 0,
-            itemRadius: [0, 1, 2, 3],
-            data: data_boxplotData,
+                label: boxlabel,
+                backgroundColor: "white",
+                borderColor: colors_boxplot,
+                borderWidth: 2,
+                outlierColor: colors_boxplot,
+                padding: 0,
+                itemRadius: [0, 1, 2, 3],
+                data: data_boxplotData,
             }]
         };
 
@@ -119,12 +111,12 @@ $(document).ready(function () {
             type: 'boxplot',
             data: boxplotData,
             options: {
-                maintainAspectRatio: false,
+            maintainAspectRatio: false,
 
-            title: {
-                display: true,
-                text: 'Chart.js Box Plot Chart'
-            },
+            // title: {
+            //     display: true,
+            //     text: 'Chart.js Box Plot Chart'
+            // },
             tooltips: {enabled: false},
             hover: {mode: null},
             plugins: {
@@ -135,11 +127,12 @@ $(document).ready(function () {
                 title: {
                     display: true,
                     align: "center",
-                    text: 'ER binding sites counts by data sets',
+                    text: '           ER binding sites counts by data sets',
                     padding: {
                         top: 20,
-                        bottom: 20
-                        }
+                        bottom: 20,
+                    },
+                   
                     }
                 },
                 tooltips: {
@@ -174,13 +167,15 @@ $(document).ready(function () {
 
     };
 
+    
+
     // ===================== Submit ===============
     $('#submit').click(function (e) {
         e.preventDefault();
         var start_time = Date.now();
         //e.stopPropagation();
 
-        // console.log($('#fname').val());
+        // //console.log($('#fname').val());
 
         document.getElementById("processtip").innerHTML = "<span class='ld ld-ring ld-spin'></span>"
 
@@ -204,19 +199,19 @@ $(document).ready(function () {
 
 
     function main_process_result (processResult){
-        // console.log("I'm done loading data")
-        console.log("processResult" + processResult)
+        // //console.log("I'm done loading data")
+        //console.log("processResult" + processResult)
         var start_time = Date.now();
         var mydatasets = [];
-        console.log("Network response " + (Date.now() - start_time)/1000 + " s")
+        //console.log("Network response " + (Date.now() - start_time)/1000 + " s")
         document.getElementById("processtip").innerHTML = "";
         window.click_once = true;
 
-        // console.log(processResult);
-        // console.log("=============")
+        // //console.log(processResult);
+        // //console.log("=============")
         processResult = process_local_result(processResult);
         // $('#myChart').html("<canvas id='myChart'></canvas>")
-        // console.log(processResult);
+        // //console.log(processResult);
         // for microArray
         var stats1 = processResult[2];
         var stats2 = processResult[3];
@@ -244,8 +239,8 @@ $(document).ready(function () {
 
 
             data = processResult[0];
-            console.log("data" + processResult)
-            console.log("mydataset processing start time " + Date.now())
+            //console.log("data" + processResult)
+            //console.log("mydataset processing start time " + Date.now())
             mydatasets = [];
             var count = 0
             var max_len = 0
@@ -285,47 +280,45 @@ $(document).ready(function () {
                     max_len = data[i].length;
                 }
             };
-            console.log(mydatasets)
+            //console.log(mydatasets)
 
             // sort
             mydatasets.sort((a, b) => (a.data.length < b.data.length) ? 1 : -1);
             window.mydatasets = mydatasets;
-            // console.log(window.mydatasets)
-            // console.log("mydataset")
-            // console.log("mydataset processing end time " + Date.now())
-            // // console.log(mydatasets.length)
-            document.getElementById("legend_container").innerHTML = "";
-            document.getElementById("duration_container").innerHTML = "";
-            document.getElementById("legend_stats").innerHTML = "";
-            document.getElementById("aftersubmit1").innerHTML = "";
 
-            document.getElementById("legend_container_rna").innerHTML = "";
-            document.getElementById("duration_container_rna").innerHTML = "";
-            document.getElementById("legend_stats_rna").innerHTML = "";
-            document.getElementById("myChart_rna").innerHTML = "";
-            document.getElementById("aftersubmit2").innerHTML = "";
+            // reset
+            document.getElementById("legend_container").innerText = "";
+            document.getElementById("duration_container").innerText = "";
+            document.getElementById("legend_stats").innerText = "";
+            document.getElementById("aftersubmit1").innerText = "";
 
-            document.getElementById("legend_container_chipseq").innerHTML = "";
-            document.getElementById("duration_container_chipseq").innerHTML = "";
-            document.getElementById("legend_stats_chipseq").innerHTML = "";
-            document.getElementById("aftersubmit3").innerHTML = "";
+            document.getElementById("legend_container_rna").innerText = "";
+            document.getElementById("duration_container_rna").innerText = "";
+            document.getElementById("legend_stats_rna").innerText = "";
+            document.getElementById("myChart_rna").innerText = "";
+            document.getElementById("aftersubmit2").innerText = "";
+
+            document.getElementById("legend_container_chipseq").innerText = "";
+            document.getElementById("duration_container_chipseq").innerText = "";
+            document.getElementById("legend_stats_chipseq").innerText = "";
+            document.getElementById("aftersubmit3").innerText = "";
 
 
             
 
             if (mydatasets.length == 0) {
-                // // console.log("len 0");
+                // // //console.log("len 0");
 
                 document.getElementById("aftersubmit1").innerHTML = "Gene " + $('#fname').val() + " Not found in MicroArray database..."
             }
             else {
-                // console.log("mydataset len > 0")
+                // //console.log("mydataset len > 0")
                 var colorList = mydatasets;
                 colorize = function(colorList, stats) {
                     var container = document.getElementById('legend_container');
-                    // console.log(colorList)
+                    // //console.log(colorList)
                     for (var item in colorList) {
-                        // console.log(item);
+                        // //console.log(item);
                         var boxContainer = document.createElement("DIV");
                         var box = document.createElement("DIV");
                         var label = document.createElement("DIV");
@@ -351,7 +344,7 @@ $(document).ready(function () {
                     var container = document.getElementById('legend_stats');
 
                     for (var item in colorList) {
-                        // // console.log(item);
+                        // // //console.log(item);
                         var boxContainer = document.createElement("DIV");
                         var box = document.createElement("DIV");
                         var label = document.createElement("DIV");
@@ -397,8 +390,8 @@ $(document).ready(function () {
                     var container = document.getElementById('duration_container');
 
                     for (var item in colorList) {
-                        // // console.log(item);
-                        // // console.log(colorList[item]);
+                        // // //console.log(item);
+                        // // //console.log(colorList[item]);
                         var boxContainer2 = document.createElement("DIV");
                         var boxContainer = document.createElement("DIV");
                         var boxContainer_t = document.createElement("DIV");
@@ -483,7 +476,7 @@ $(document).ready(function () {
                 // Define Chart
                 
 
-                // console.log(mydatasets)
+                // //console.log(mydatasets)
                 var myChart1 = new Chart(ctx, {
                     type: 'ScatterWithLine',
                     data: {
@@ -500,16 +493,16 @@ $(document).ready(function () {
                             yAxisKey: 'logp',
                         },
                         'onClick' : function (evt, item) {
-                            // console.log ('legend onClick', evt);
-                            // console.log('legd item', item);
+                            // //console.log ('legend onClick', evt);
+                            // //console.log('legd item', item);
                             var dataset_index = item['0']['datasetIndex']
                             var innerIndex = item['0']['index'];
-                            // console.log(dataset_index)
-                            // console.log(innerIndex);
+                            // //console.log(dataset_index)
+                            // //console.log(innerIndex);
                             var GSE = mydatasets[dataset_index]['data'][innerIndex]['GSE'];
-                            // console.log(GSE);
+                            // //console.log(GSE);
                             var myurl = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc="+GSE;
-                            // console.log(myurl);
+                            // //console.log(myurl);
                             window.open(
                                 myurl, "_blank");
                         },
@@ -579,8 +572,20 @@ $(document).ready(function () {
 
             
                 //Download Chart Image
-                document.getElementById("download1").addEventListener('click', function(){
+                // document.getElementById("download1").addEventListener('click', function(){
+                //     /*Get image of canvas element*/
+                //     var canvas = document.getElementById("myChart");
+                //     fillCanvasBackgroundWithColor(canvas, 'white');
+                //     var url_base64jp = canvas.toDataURL("image/jpg");
+                //     /*get download button (tag: <a></a>) */
+                //     var a =  document.getElementById("download1");
+                //     /*insert chart image url to download button (tag: <a></a>) */
+                //     a.href = url_base64jp;
+                //     a.download = $('#fname').val() + "-microarray.jpg";
+                // });
+                document.getElementById("download1").addEventListener('click', function(e){
                     /*Get image of canvas element*/
+                    // e.preventDefault()
                     var canvas = document.getElementById("myChart");
                     fillCanvasBackgroundWithColor(canvas, 'white');
                     var url_base64jp = canvas.toDataURL("image/jpg");
@@ -589,6 +594,8 @@ $(document).ready(function () {
                     /*insert chart image url to download button (tag: <a></a>) */
                     a.href = url_base64jp;
                     a.download = $('#fname').val() + "-microarray.jpg";
+
+                    
                 });
 
 
@@ -597,11 +604,8 @@ $(document).ready(function () {
 
 
                 document.getElementById("chart1-title-id").innerHTML = "<span><h3>MicroArray Analysis</h3></span></br><span>" + calculateDatasetStats(mydatasets, 0.5)+"</span>";
-                console.log("microarray processing end time " + Date.now())
+                //console.log("microarray processing end time " + Date.now())
             }
-            // create filter table
-            // $("#filter-bar").removeClass("hidden");
-
 
 
         // ////////////////////////////////////////////
@@ -649,16 +653,16 @@ $(document).ready(function () {
         };
         mydatasets_rna.sort((a, b) => (a.data.length < b.data.length) ? 1 : -1);
         window.mydatasets_rna = mydatasets_rna;
-            // console.log(mydatasets_rna.length)
+            // //console.log(mydatasets_rna.length)
             if (mydatasets_rna.length == 0) {
-                // console.log("len 0");
+                // //console.log("len 0");
 
                     document.getElementById("aftersubmit2").innerHTML = "Gene " + $('#fname').val() + " Not found in RNA-seq database..."
 
             }
             else {
 
-                // console.log(mydatasets_rna);
+                // //console.log(mydatasets_rna);
                 // clear clf
                 $('#legend_container_rna').html("<div id='legend_container_rna'></div>");
                 $('#duration_container_rna').html("<div id='duration_container_rna'></div>");
@@ -672,7 +676,7 @@ $(document).ready(function () {
                     var container = document.getElementById('legend_container_rna');
 
                     for (var item in colorList) {
-                        // console.log(item);
+                        // //console.log(item);
                         var boxContainer = document.createElement("DIV");
                         var box = document.createElement("DIV");
                         var label = document.createElement("DIV");
@@ -698,7 +702,7 @@ $(document).ready(function () {
                     var container = document.getElementById('legend_stats_rna');
 
                     for (var item in colorList) {
-                        // console.log(item);
+                        // //console.log(item);
                         var boxContainer = document.createElement("DIV");
                         var box = document.createElement("DIV");
                         var label = document.createElement("DIV");
@@ -745,8 +749,8 @@ $(document).ready(function () {
                     var container = document.getElementById('duration_container_rna');
 
                     for (var item in colorList) {
-                        // // console.log(item);
-                        // // console.log(colorList[item]);
+                        // // //console.log(item);
+                        // // //console.log(colorList[item]);
                         var boxContainer2 = document.createElement("DIV");
                         var boxContainer = document.createElement("DIV");
                         var boxContainer_t = document.createElement("DIV");
@@ -829,8 +833,7 @@ $(document).ready(function () {
 
                 // =========================================================
                 // Define Chart
-                // document.getElementById('myChart_rna').setAttribute("style","width:44vw");
-
+                
                 var myChart2 = new Chart(ctx2, {
                     type: 'ScatterWithLine',
                     data: {
@@ -847,16 +850,16 @@ $(document).ready(function () {
                             yAxisKey: 'logp',
                         },
                         'onClick' : function (evt, item) {
-                            // console.log ('legend onClick', evt);
-                            // console.log('legd item', item);
+                            // //console.log ('legend onClick', evt);
+                            // //console.log('legd item', item);
                             var dataset_index = item['0']['datasetIndex']
                             var innerIndex = item['0']['index'];
-                            // console.log(dataset_index)
-                            // console.log(innerIndex);
+                            // //console.log(dataset_index)
+                            // //console.log(innerIndex);
                             var GSE = mydatasets_rna[dataset_index]['data'][innerIndex]['GSE'];
-                            // console.log(GSE);
+                            // //console.log(GSE);
                             var myurl = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc="+GSE;
-                            // console.log(myurl);
+                            // //console.log(myurl);
                             window.open(
                                 myurl, "_blank");
                         },
@@ -981,7 +984,7 @@ $(document).ready(function () {
 
         ////////
         if (mydatasets_chipseq.length == 0) {
-            // console.log("len 0");
+            // //console.log("len 0");
             document.getElementById("aftersubmit3").innerHTML = "Gene " + $('#fname').val() + " Not found in Chip-seq database..."
 
         }
@@ -995,7 +998,7 @@ $(document).ready(function () {
                     var container = document.getElementById('legend_container_chipseq');
 
                     for (var item in colorList) {
-                        // console.log(item);
+                        // //console.log(item);
                         
                         var boxContainer = document.createElement("DIV");
                         var box = document.createElement("DIV");
@@ -1037,7 +1040,7 @@ $(document).ready(function () {
                     var container = document.getElementById('legend_stats_chipseq');
 
                     for (var item in colorList) {
-                        // console.log(item);
+                        // //console.log(item);
                         var boxContainer = document.createElement("DIV");
                         var box = document.createElement("DIV");
                         var label = document.createElement("DIV");
@@ -1093,8 +1096,8 @@ $(document).ready(function () {
                     var container = document.getElementById('duration_container_chipseq');
 
                     for (var item in colorList_dose) {
-                        // // console.log(item);
-                        // // console.log(colorList[item]);
+                        // // //console.log(item);
+                        // // //console.log(colorList[item]);
                         var boxContainer2 = document.createElement("DIV");
                         var boxContainer = document.createElement("DIV");
                         var boxContainer_t = document.createElement("DIV");
@@ -1184,16 +1187,16 @@ $(document).ready(function () {
                         yAxisKey: 'log2score',
                     },
                     'onClick' : function (evt, item) {
-                        // console.log ('legend onClick', evt);
-                        // console.log('legd item', item);
+                        // //console.log ('legend onClick', evt);
+                        // //console.log('legd item', item);
                         var dataset_index = item['0']['datasetIndex']
                         var innerIndex = item['0']['index'];
-                        // console.log(dataset_index)
-                        // console.log(innerIndex);
+                        // //console.log(dataset_index)
+                        // //console.log(innerIndex);
                         var GSE = mydatasets_chipseq[dataset_index]['data'][innerIndex]['GSE'];
-                        // console.log(GSE);
+                        // //console.log(GSE);
                         var myurl = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc="+GSE;
-                        // console.log(myurl);
+                        // //console.log(myurl);
                         window.open(
                             myurl, "_blank");
                     },
@@ -1256,8 +1259,8 @@ $(document).ready(function () {
             }); // ERAL1 DNM3
 
             // data for histogram
-            console.log("NOW______CHIPSEQ");
-            console.log(mydatasets_chipseq)
+            //console.log("NOW______CHIPSEQ");
+            //console.log(mydatasets_chipseq)
             var hist_chipseq_data = Array(40).fill(0);
             for (var i in mydatasets_chipseq) {
                 for (var j in mydatasets_chipseq[i].data) {
@@ -1273,7 +1276,7 @@ $(document).ready(function () {
                 }
             }
 
-            console.log(hist_chipseq_data)
+            //console.log(hist_chipseq_data)
             var canva4 = document.getElementById("myChart_chipseq_distribution");
             var ctx4 = canva4.getContext('2d');
             
@@ -1398,8 +1401,10 @@ $(document).ready(function () {
                 showPage();
                 var end_time = Date.now();
                 var delta_time = (end_time-start_time)/1000;
-                console.log('total time ' + delta_time + ' s')
-        
+                //console.log('total time ' + delta_time + ' s')
+
+
+            
         setTimeout(display_box(mydatasets_chipseq), 10000);
         
 
@@ -1422,8 +1427,8 @@ $(document).ready(function () {
       }
 
     function InitFilter() {
-        // console.log("OGH");
-        // console.log(window.mydatasets);
+        // //console.log("OGH");
+        // //console.log(window.mydatasets);
 
         // modify the content of gene name
         var input_html_genename = '';
@@ -1432,7 +1437,7 @@ $(document).ready(function () {
             input_html_genename += "<li id='" + name + "_id'" + " role='option'>" + name + "</li>"
           }
         // input_html_genename += "<li id='all_id' role='option'>ALL</li>"
-        // // console.log(input_html_genename);
+        // // //console.log(input_html_genename);
         $("#ss_elem_list1").html(input_html_genename);
 
         var input_html_genename = '';
@@ -1441,14 +1446,14 @@ $(document).ready(function () {
             input_html_genename += "<li id='" + name + "_id'" + " role='option'>" + name + "</li>"
         }
         // input_html_genename += "<li id='all_id' role='option'>ALL</li>"
-        // // console.log(input_html_genename);
+        // // //console.log(input_html_genename);
         $("#ss_elem_list1_c").html(input_html_genename);
 
 
         $("#myfilterbox").removeClass("hidden");
         $("#myfilterbox-chipseq").removeClass("hidden");
         
-        // console.log("OGH33333");
+        // //console.log("OGH33333");
 
     }
 
@@ -1456,35 +1461,151 @@ $(document).ready(function () {
         Chart.helpers.each(Chart.instances, function(instance){
             instance.destroy();
         });
+
         document.getElementById("myfilterbox").classList.add("hidden");
         
-        document.getElementById("figure1").classList.add("hidden");
+        // document.getElementById("figure1").classList.add("hidden");
+        $('#figure1').html(`
+        <div id="figure1" class="horizon-flex-contain">
+        <div class="chart-container">
+          <div id="chart1-title-id" style="text-align: center; margin-top: 1em;"></div>
+          <canvas id="myChart" width="663" height="350"></canvas> 
+          <a id="download1"
+            href=""
+            class="btn btn-primary float-right bg-flat-color-1"
+            title="Descargar Gráfico">
+  
+                    <!-- Download Icon -->
+            <i class="fa fa-download"></i>
+          </a>
+        </div>
+  
+        <div>
+          <div style="height: 5vh;"></div>
+          <div style="display: flex; margin-left: 3em;">
+            <div id="duration_container"></div>
+            <div id="legend_container"></div>
+            <div id="legend_stats"></div>
+          </div>
+        </div>
+    </div>
+        `)
+
+        
         document.getElementById("dashline2").classList.add("hidden");
-        document.getElementById("figure2").classList.add("hidden");
+        $('#figure2').html(`
+        <div id="figure2" class="horizon-flex-contain">
+            <div class="chart-container">
+            <div id="chart2-title-id" style="text-align: center; margin-top: 1em;"></div>
+            <canvas id="myChart_rna" width="663" height="350"></canvas> 
+            <a id="download2"
+                href=""
+                class="btn btn-primary float-right bg-flat-color-1"
+                title="Descargar Gráfico">
+
+                        <!-- Download Icon -->
+                <i class="fa fa-download"></i>
+                </a>
+            </div>
+
+            <div> 
+            <div style="height: 5vh;"></div>
+            <div style="display: flex;margin-left: 3em;">
+                <div id="duration_container_rna"></div>
+                <div id="legend_container_rna"></div>
+                <div id="legend_stats_rna"></div>
+            </div>
+            <div style="height: 4em;"></div>
+            </div>
+            
+        </div>`)
+        // document.getElementById("figure2").classList.add("hidden");
         document.getElementById("dashline3").classList.add("hidden");
-        document.getElementById("figure3").classList.add("hidden");
+        $('#figure3').html(`
+        <div id="figure3" class="horizon-flex-contain">
+        <div id="chart-container3" class="chart-container" style="width: 650px;height: 600px;">
+          <div id="chart3-title-id" style="text-align: center;"></div>
+      
+          <div style="display: flex">
+            <!-- <div style="width: 1em;"></div> -->
+            <div>
+              <canvas id="myChart_chipseq_distribution" width="650" height="120"></canvas> 
+            </div>
+          </div>
+          
+          
+          <div id="chipseq-big" style="display: flex;">
+            <!-- <div style="width: 6px;"></div> -->
+            <div style="height: 44.5vh;" >
+              <canvas id="myChart_chipseq" width="663" height="420"></canvas>
+              <a id="download3"
+              href=""
+              class="btn btn-primary float-right bg-flat-color-1"
+              title="Descargar Gráfico">
+    
+                      <!-- Download Icon -->
+              <i class="fa fa-download"></i>
+            </a>
+            </div>
+          </div>
+          
+          
+        </div>
+        <div style="width: 15vw;">
+          <div style="height: 5vh;"></div>
+          <div id="chipseq_legend_container" style="display: flex; margin-left: 3em;">
+            <div id="duration_container_chipseq"></div>
+            <div style="width: 20vw;" id="legend_container_chipseq"></div>
+            <div style="width: 20vw;" id="legend_stats_chipseq"></div>
+          </div>
+    
+          <div> 
+            <div style="display: flex">
+              <div style="width: 30vw"> </div>
+              
+            </div>
+            <!-- <div style="height: 5%"></div> -->
+          </div>
+          <br><br>
+          
+          
+          
+        </div>
+        
+      </div>
+        `)
+        // document.getElementById("figure3").classList.add("hidden");
         document.getElementById("myfilterbox-chipseq").classList.add("hidden");
+        document.getElementById("download1").classList.add("hidden");
+        document.getElementById("download2").classList.add("hidden");
+        document.getElementById("download3").classList.add("hidden");
 
-
+        window.current_focus = null;
+        window.focus_set = {'cellline': [], 'duration': [], 'dose': [], 'adj_p_value': []}
+        window.focus_set_chipseq = {'cellline_chipseq': [], 'condition_chipseq': []}
     }
 
     function showPage() {
+        //console.log("IM SHOW PAGEGGGGGGG")
+
         document.getElementById("myfilterbox").classList.remove("hidden");
         
-        document.getElementById("figure1").classList.remove("hidden");
-        document.getElementById("dashline2").classList.remove("hidden");
-        document.getElementById("figure2").classList.remove("hidden");
-        document.getElementById("dashline3").classList.remove("hidden");
-        document.getElementById("figure3").classList.remove("hidden");
-        document.getElementById("myfilterbox-chipseq").classList.remove("hidden");
 
+        document.getElementById("dashline2").classList.remove("hidden");
+
+        document.getElementById("dashline3").classList.remove("hidden");
+
+        document.getElementById("myfilterbox-chipseq").classList.remove("hidden");
+        document.getElementById("download1").classList.remove("hidden");
+        document.getElementById("download2").classList.remove("hidden");
+        document.getElementById("download3").classList.remove("hidden");
     }
 
     
 
     // load example
     // window.preload = window.preload.replace(/'/g, '"')
-    console.log(window.preload);
+    //console.log(window.preload);
     // setTimeout(main_process_result, 2000, window.preload);
     window.preload = JSON.parse(window.preload)
 

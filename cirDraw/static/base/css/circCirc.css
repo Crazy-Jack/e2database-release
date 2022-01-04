@@ -240,8 +240,8 @@ background: url('../../../media/close.png') no-repeat center center;
 
 .chart-container {
   padding: 10px;
-  height: 40vh; 
-  width: 44vw;
+  /* height: 40vh;  */
+  /* width: 44vw; */
 }
 
 .circle {
