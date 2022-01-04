@@ -1347,19 +1347,19 @@ $(document).ready(function () {
 
             document.getElementById("download3").addEventListener('click', function(){
                 /*Get image of canvas element*/
-                // var canvas = document.getElementById("myChart_chipseq");
-                // fillCanvasBackgroundWithColor(canvas, 'white');
-                // var url_base64jp = canvas.toDataURL("image/jpg");
-                // /*get download button (tag: <a></a>) */
-                // var a =  document.getElementById("download3");
-                // /*insert chart image url to download button (tag: <a></a>) */
-                // a.href = url_base64jp;
-                // a.download = $('#fname').val() + "-chipseq.jpg";
-                let c = document.getElementById("figure3"); // or document.getElementById('canvas');
-                html2canvas(c).then((canvas)=>{
-                    var t = canvas.toDataURL().replace("data:image/png;base64,", "");
-                    downloadBase64File('image/png',t,'image.jpg');
-                })
+                var canvas = document.getElementById("myChart_chipseq");
+                fillCanvasBackgroundWithColor(canvas, 'white');
+                var url_base64jp = canvas.toDataURL("image/jpg");
+                /*get download button (tag: <a></a>) */
+                var a =  document.getElementById("download3");
+                /*insert chart image url to download button (tag: <a></a>) */
+                a.href = url_base64jp;
+                a.download = $('#fname').val() + "-chipseq.jpg";
+                // let c = document.getElementById("figure3"); // or document.getElementById('canvas');
+                // html2canvas(c).then((canvas)=>{
+                //     var t = canvas.toDataURL().replace("data:image/png;base64,", "");
+                //     downloadBase64File('image/png',t,'image.jpg');
+                // })
                 // window.open('', document.getElementById('chipseq-big').toDataURL());
             });
             
@@ -1579,6 +1579,8 @@ $(document).ready(function () {
         document.getElementById("download1").classList.add("hidden");
         document.getElementById("download2").classList.add("hidden");
         document.getElementById("download3").classList.add("hidden");
+        document.getElementById("chipseq-title-id").classList.add("hidden");
+        
 
         window.current_focus = null;
         window.focus_set = {'cellline': [], 'duration': [], 'dose': [], 'adj_p_value': []}
@@ -1599,6 +1601,7 @@ $(document).ready(function () {
         document.getElementById("download1").classList.remove("hidden");
         document.getElementById("download2").classList.remove("hidden");
         document.getElementById("download3").classList.remove("hidden");
+        document.getElementById("chipseq-title-id").classList.remove("hidden");
     }
 
     

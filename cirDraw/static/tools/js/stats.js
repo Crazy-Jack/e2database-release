@@ -161,7 +161,11 @@ $(document).ready(function () {
 
         var microarray_response_num = processResult[0].length
         console.log("microarray_response_num " + microarray_response_num)
-        $(`#num_genes_${id_mode}`).html(`<div id="num_genes_${id_mode}" style="padding-bottom: 1em;"><b>MicroArray: </b>Got <u>${microarray_response_num}</u> Significant Genes (only show top 50 genes, click <a id='export_${id_mode}' color="black" download="" href="#"><u><span style="color:red">here</u></span></a> to export all significants)</div>`)
+        $(`#num_genes_${id_mode}`).html(`<div id="num_genes_${id_mode}" style="padding-bottom: 1em;"><b>MicroArray: </b>Got <u>${microarray_response_num}</u> Significant Genes 
+        (only show top 50 genes, click <a id='export_${id_mode}' color="black" download="" href="#"><u><span style="color:red">here</u></span></a> to export all significants)
+        <br>
+        <u>Note:</u> For data sets with replicates, we consider both Adjusted P-Value and Log Fold Change; for datasets without replicates, we only consider Log Fold Change.
+        </div>`)
         // Convert to microarray data
         var str_micro = "GeneName\tNumOfData\tSignifiLogFCPercent\n"
         var microarray_table_html = `<table id="microarray_table_up_${id_mode}">
@@ -226,11 +230,11 @@ $(document).ready(function () {
         // MicroArray - plot
         var data_plot_micro = [
             {
-                name: 'Significant',
+                name: 'Altered',
                 values: data_plot_micro_sign
             },
             {
-                name: 'Non-Significant',
+                name: 'Unaltered',
                 values: data_plot_micro_non_sign
             }
         ]
@@ -241,7 +245,10 @@ $(document).ready(function () {
         // RNA-seq //
         var rna_response_num = processResult[1].length
         console.log("rna_response_num " + rna_response_num)
-        $(`#num_genes_${id_mode}_rna`).html(`<div id="num_genes_${id_mode}_rna" style="padding-bottom: 1em;"><b>RNA-seq: </b>Got <u>${rna_response_num}</u> Significant Genes (only show top 50 genes, click <a id='export_${id_mode}_rna' download="" href="#"><u><span style="color:red">here</u></span></u></a> to export all significants)</div>
+        $(`#num_genes_${id_mode}_rna`).html(`<div id="num_genes_${id_mode}_rna" style="padding-bottom: 1em;"><b>RNA-seq: </b>Got <u>${rna_response_num}</u> Significant Genes (only show top 50 genes, click <a id='export_${id_mode}_rna' download="" href="#"><u><span style="color:red">here</u></span></u></a> to export all significants)
+        <br>
+        <u>Note:</u> For data sets with replicates, we consider both Adjusted P-Value and Log Fold Change; for datasets without replicates, we only consider Log Fold Change.
+        </div>
         `)
         var str_rna = "GeneName\tNumOfData\tSignifiLogFCPercent\n"
         var rnaseq_table_html = `<table id="rnaseq_table_up_${id_mode}">
@@ -313,11 +320,11 @@ $(document).ready(function () {
         // RNA-seq - plot
         var data_plot_rnaseq = [
             {
-                name: 'Significant',
+                name: 'Altered',
                 values: data_plot_rnaseq_sign
             },
             {
-                name: 'Non-Significant',
+                name: 'Unaltered',
                 values: data_plot_rnaseq_non_sign
             }
         ]

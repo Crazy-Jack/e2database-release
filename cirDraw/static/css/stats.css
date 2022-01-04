@@ -105,11 +105,11 @@ fill: none;
 stroke: #000;
 }
 
-.stacked-chart .series-non-significant {
+.stacked-chart .series-unaltered {
 fill: steelblue;
 }
 
-.stacked-chart .series-significant {
+.stacked-chart .series-altered {
   fill: #CD4638;
 }
 

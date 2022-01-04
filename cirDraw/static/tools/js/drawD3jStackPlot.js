@@ -19,7 +19,7 @@ function drawStackPlot(data, up_down_select, mode_str, highest) {
         </div>
       </div>`
     )
-    var seriesNames = ["Significant", "Non-Significant"],
+    var seriesNames = ["Altered", "Unaltered"],
         
         numSamples = 50,
         numSeries = seriesNames.length,
