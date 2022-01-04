@@ -135,17 +135,19 @@ def get_stats(request):
                 for cell_line in celllines[1:]:
                     query += " OR CellLine = '" + str(cell_line) + "'"
             query += ")"
-            query += " AND "
+            
 
         if durations != 'ALL':
+            query += " AND "
             query += "(Duration = " + str(durations[0])
             if len(durations) > 1:
                 for duration in durations[1:]:
                     query += " OR Duration = " + str(duration)
             query += ")"
-            query += " AND "
+            
 
         if doses != 'ALL':
+            query += " AND "
             query += "(Dose = " + str(doses[0])
             if len(doses) > 1:
                 for dose in doses[1:]:
