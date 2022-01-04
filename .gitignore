@@ -2,3 +2,6 @@ venv/
 secret.sh
 __pycache__/
 database/
+uwsgi.ini
+uwsgi.ini-backup
+env/

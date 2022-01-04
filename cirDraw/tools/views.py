@@ -18,7 +18,7 @@ import csv
 import numpy as np
 import re
 import pickle
-import os 
+import os
 
 # ========================= RENDER PAGES ==============================
 def render_index_page(request):
@@ -34,7 +34,7 @@ def render_search_page(request):
     """test_render_search_page"""
     # preload data
     prepath = "/home/tianqinl/mye2/cirDraw/tools/cache.pkl"
-    if not os.path.isfile(prepath): 
+    if not os.path.isfile(prepath):
         prepath = "/home/tianqinl/Code/e2database-release/cirDraw/tools/cache.pkl"
     if not os.path.isfile(prepath):
         prepath = "/Users/tianqinli/Code/e2database-release/cirDraw/tools/cache.pkl"
@@ -79,13 +79,13 @@ def render_display_page(request, md5):
 # ====================================================================
 
 @csrf_exempt
-def get_stats(request): 
+def get_stats(request):
     celllines = request.GET['celllines']
     if len(celllines) == 0:
         celllines = 'ALL'
     else:
         celllines = celllines[:-1].split(";")
-    
+
     # duration
     durations = request.GET['durations']
     if len(durations) == 0:
@@ -93,22 +93,22 @@ def get_stats(request):
     else:
         print(durations[:-1])
         durations = [int(i[:-5]) for i in durations[:-1].split(";")]
-    
-    
+
+
     # dose
     doses = request.GET['doses']
     if len(doses) == 0:
         doses = 'ALL'
     else:
         doses = [int(i[:-3]) for i in doses[:-1].split(";")]
-    
-    
-    # uppercent 
+
+
+    # uppercent
     up_percent = request.GET['up_percent']
     down_percent = request.GET['down_percent']
     adj_p_value = request.GET['adj_p_value']
     logfc = request.GET['logfc']
-    
+
     if up_percent == "-1":
         mode = "down"
         mode_sign = "<"
@@ -125,7 +125,7 @@ def get_stats(request):
     print(f"durations {durations}")
     print(f"doses {doses}")
     print(f"celllines {celllines}")
-    
+
     # MicroArray
     if celllines != 'ALL' or durations != 'ALL' or doses != 'ALL':
         query = "WHERE "
@@ -136,34 +136,34 @@ def get_stats(request):
                     query += " OR CellLine = '" + str(cell_line) + "'"
             query += ")"
             query += " AND "
-        
+
         if durations != 'ALL':
-            query += "(Duration = " + str(durations[0]) 
+            query += "(Duration = " + str(durations[0])
             if len(durations) > 1:
                 for duration in durations[1:]:
                     query += " OR Duration = " + str(duration)
             query += ")"
             query += " AND "
-        
+
         if doses != 'ALL':
-            query += "(Dose = " + str(doses[0]) 
+            query += "(Dose = " + str(doses[0])
             if len(doses) > 1:
                 for dose in doses[1:]:
                     query += " OR Dose = " + str(dose)
             query += ")"
-    
+
         print(query)
     else:
         query = ""
     sql_query = f'''
-    select 1 as id, C.ins_count, C.genename, C.logfc_percent, C.log10padj_percent from (select count(A.GeneName) 
-    as ins_count,A.GeneName, AVG(Log2FC{mode_sign}{logfc}) as logfc_percent, AVG(minus_log10padj>{str(-np.log10(float(adj_p_value)))} OR A.minus_log10padj=0.0) as log10padj_percent from 
-    (select GeneName, Log2FC, minus_log10padj from CombinedData {query}) as A group by A.GeneName ORDER BY ins_count DESC, logfc_percent DESC) C 
+    select 1 as id, C.ins_count, C.genename, C.logfc_percent, C.log10padj_percent from (select count(A.GeneName)
+    as ins_count,A.GeneName, AVG(Log2FC{mode_sign}{logfc}) as logfc_percent, AVG(minus_log10padj>{str(-np.log10(float(adj_p_value)))} OR A.minus_log10padj=0.0) as log10padj_percent from
+    (select GeneName, Log2FC, minus_log10padj from CombinedData {query}) as A group by A.GeneName ORDER BY ins_count DESC, logfc_percent DESC) C
     where C.logfc_percent > {percent} AND C.log10padj_percent > {percent};'''
     print('SQL: ', sql_query)
     data_p = SearchTable.objects.raw(sql_query)
     print(len(data_p))
-   
+
     print(data_p.columns)
     data_microarray = []
     # TODO: get the return of microarray ready
@@ -176,18 +176,18 @@ def get_stats(request):
             'log10padj_percent': data_i.log10padj_percent,
         }
         data_microarray.append(obj_i)
-    
+
 
     ## RNA-seq
     sql_query = f'''
-    select 1 as id, C.ins_count, C.genename, C.logfc_percent, C.log10padj_percent from (select count(A.GeneName) 
-    as ins_count,A.GeneName, AVG(Log2FC{mode_sign}{logfc}) as logfc_percent, AVG(A.minus_log10padj>{str(-np.log10(float(adj_p_value)))} OR A.minus_log10padj=0.0) as log10padj_percent from 
-    (select GeneName, Log2FC, minus_log10padj from RNAseqData {query}) as A group by A.GeneName ORDER BY ins_count DESC, logfc_percent DESC) C 
+    select 1 as id, C.ins_count, C.genename, C.logfc_percent, C.log10padj_percent from (select count(A.GeneName)
+    as ins_count,A.GeneName, AVG(Log2FC{mode_sign}{logfc}) as logfc_percent, AVG(A.minus_log10padj>{str(-np.log10(float(adj_p_value)))} OR A.minus_log10padj=0.0) as log10padj_percent from
+    (select GeneName, Log2FC, minus_log10padj from RNAseqData {query}) as A group by A.GeneName ORDER BY ins_count DESC, logfc_percent DESC) C
     where C.logfc_percent > {percent} AND C.log10padj_percent > {percent};'''
     print('RNAseq SQL: ', sql_query)
     data_p = SearchTable.objects.raw(sql_query)
     print(len(data_p))
-   
+
     print(data_p.columns)
     data_rnaseq = []
     # TODO: get the return of microarray ready
@@ -200,10 +200,10 @@ def get_stats(request):
             'log10padj_percent': data_i.log10padj_percent,
         }
         data_rnaseq.append(obj_i)
-    
 
 
-    
+
+
     return JsonResponse([data_microarray, data_rnaseq], safe=False)
 
 
@@ -213,20 +213,20 @@ def get_stats(request):
 def search_indb(request):
     start_time = time.time()
     assert request.method == "GET", f"request.method is {request.method} not GET"
-    
+
     # search for the database to get this form of data
 
 
     gene_name = request.GET['gene_name']
     print(f"gene_name {gene_name}")
-    
+
     start_mr_search_time = time.time()
     data = SearchTable.objects.filter(GeneName__exact = gene_name)
     print(f"microarray seach time {time.time() - start_mr_search_time} s")
-    print(f"microarray data.objects.count() {len(data)}")
+
 
     all_out_data = []
-    
+
     out_data = {}
 
     # get unique duration, dose
@@ -254,6 +254,9 @@ def search_indb(request):
             out_data[CellLine] = [obj]
         else:
             out_data[CellLine].append(obj)
+
+        print(f"CHECKEREERERER")
+
     print(f"time for object iteration {time.time() - st_iter}")
     # calculate stats
     start_calculate_stats_time = time.time()
@@ -261,8 +264,8 @@ def search_indb(request):
     print(f"time for calculate stats {time.time() - start_calculate_stats_time}")
 
     all_out_data.append(out_data)
-    
-    
+
+
     # RNAseq
     start_rna_search_time = time.time()
     data = SearchTableRNAseq.objects.filter(GeneName__exact = gene_name)
@@ -278,7 +281,7 @@ def search_indb(request):
         Rep = data_i.Rep
         Duration = data_i.Duration
         GSE = data_i.GSE
-        
+
         # print(f"data_i.filename {data_i.filename} out {out_name}: hour: {hours}; dose {dose}")
         # create object to append
 
@@ -309,7 +312,7 @@ def search_indb(request):
     # chipseq
     start_chipseq = time.time()
     print(f"---------gene_name {gene_name}")
-    gene_info = SearchTableChipSeqRefData.objects.filter(gene__exact = gene_name) 
+    gene_info = SearchTableChipSeqRefData.objects.filter(gene__exact = gene_name)
     print(f"----gene_info {len(gene_info)}")
     if len(gene_info) > 0:
         chr_num = gene_info[0].chr_num
@@ -319,7 +322,7 @@ def search_indb(request):
         data_chip = SearchTableChipSeq.objects.filter(chr_num__exact = chr_num).filter(mid__gt = up_tss).filter(mid__lt=down_tss)
         print([i.score for  i in data_chip])
         print(f"chipseq time is {time.time() - start_chipseq}")
-        
+
         out_data = {}
         for data_i in data_chip:
             mid = data_i.mid
@@ -328,7 +331,7 @@ def search_indb(request):
             Dose = data_i.Dose
             Duration = data_i.Duration.replace(" ", "").replace(",", "-")
             GSE = data_i.GSE
-            
+
             # print(f"data_i.filename {data_i.filename} out {out_name}: hour: {hours}; dose {dose}")
             # create object to append
 
@@ -353,7 +356,7 @@ def search_indb(request):
     end_time = time.time()
     total_time = end_time - start_time
     print(f"Total time {total_time} s")
-   
+
     return JsonResponse(all_out_data, safe=False)
 
 
@@ -372,12 +375,12 @@ def calculate_statistics(out_data, threshold_fc):
             elif j['logfc'] < 0:
                 if (j['logp'] == 0 and j['logfc'] < -threshold_fc) or (j['logp'] >= 1.0):
                     stats_i[0] += 1
-               
+
         i_sum = stats_i[0] + stats_i[1]
-        
+
         stats_i[0], stats_i[1] = round(stats_i[0]/len(out_data[i]), 2), round(stats_i[1]/len(out_data[i]), 2)
-        
-    
+
+
         stats[i] = stats_i
     print(f"stats {stats}")
     return stats
@@ -402,7 +405,7 @@ def meta_info_process(filename):
     dose = 0
     hour_string = ""
     dose_string = ""
-    
+
 
     for piece in filename_list:
         piece = piece.replace("\"", "")
@@ -422,12 +425,12 @@ def meta_info_process(filename):
         # cout as part of the name if not be used as dose or hours
         if append_switch:
             out_name_list.append(piece)
-    
+
     M = out_name_list[0]
     out_name_list = out_name_list[1:]
     out_name_list = [p for p in out_name_list if not re.match(r'^\d+', p)]
-    
-    out_name = "_".join(out_name_list) 
+
+    out_name = "_".join(out_name_list)
     return out_name, hours, dose, M
 
 

@@ -135,16 +135,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, "static/css"),
-    os.path.join(BASE_DIR, "static/js"),
-    os.path.join(BASE_DIR, "static/js/jquery"),
-    os.path.join(BASE_DIR, "static/js/jquery-easing"),
-    os.path.join(BASE_DIR, "static/js/bootstrap"),
-    os.path.join(BASE_DIR, "static/vendor"),
-    os.path.join(BASE_DIR, "static/vendor/jquery-easing"),
+    os.path.join(BASE_DIR, "static/base"),
+    os.path.join(BASE_DIR, "static/tools"),
 )
 
 
