@@ -186,6 +186,7 @@ $(document).ready(function () {
             $.getJSON("/tools/search", {
                 'gene_name': gene_name
             }).done(function(processResult) {
+                console.log(processResult)
                 return main_process_result(processResult);
             }).fail(
                 function () {
@@ -200,7 +201,7 @@ $(document).ready(function () {
 
     function main_process_result (processResult){
         // //console.log("I'm done loading data")
-        //console.log("processResult" + processResult)
+        console.log(processResult)
         var start_time = Date.now();
         var mydatasets = [];
         //console.log("Network response " + (Date.now() - start_time)/1000 + " s")
@@ -208,7 +209,7 @@ $(document).ready(function () {
         window.click_once = true;
 
         // //console.log(processResult);
-        // //console.log("=============")
+        console.log("=============")
         processResult = process_local_result(processResult);
         // $('#myChart').html("<canvas id='myChart'></canvas>")
         // //console.log(processResult);
@@ -281,7 +282,7 @@ $(document).ready(function () {
                 }
             };
             //console.log(mydatasets)
-
+            console.log("====2=========")
             // sort
             mydatasets.sort((a, b) => (a.data.length < b.data.length) ? 1 : -1);
             window.mydatasets = mydatasets;
@@ -597,7 +598,7 @@ $(document).ready(function () {
 
                     
                 });
-
+                console.log("---------check3------------")
 
                 
 

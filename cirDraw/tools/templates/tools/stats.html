@@ -79,6 +79,73 @@
 
 <div style="border-top: 4em;" class="container">
   <div style="padding-top: 2em;"></div>
+  <div>
+    <h3>Meta Data Statistics</h3>
+    <div style="display: table-cell; width: 500px;">
+      <form>
+      <label for="fname3">Select Top </label>
+      <input type="text" id="fname3" class="hint" name="fname3" value="5"   size="3em"
+          onfocus="if (this.className=='hint') { this.className = ''; this.value = '5'; }"
+          onblur="if (this.value == '') { this.className = 'hint'; this.value = '5'; }">
+      
+      <label>Percent</label>
+      <select name="direction" id="fname4">
+        <option value="up">Up</option>
+        <option value="down">Down</option>
+      </select>
+
+      <label>Regulation</label>
+      <br>
+      <label for="disply_percent">Show Top</label>
+      <input type="text" id="fname5" class="hint" name="disply_percent" value="20"   size="3em"
+          onfocus="if (this.className=='hint') { this.className = ''; this.value = '20'; }"
+          onblur="if (this.value == '') { this.className = 'hint'; this.value = '20'; }">
+      <label>Percent Genes</label>
+      <br>
+      <div style="display: flex;">
+        <input type="submit" id="submit3" value="Search">
+        <div id="processtip3" style="margin-left: 10px; margin-top: 7px;"></div>
+      </div>
+      </form>
+      <div style="padding-top: 2em;"></div>
+    </div>
+
+    <div style="display: flex;" id="meta_results_id">
+      <div class="container">
+        <div id="myChart-meta-div">
+          <canvas id="myChart-meta" width="500" height="350"></canvas> 
+        </div>
+     
+      </div>
+
+      <div class="container">
+          <div id="myChart-meta-ind-div">
+            <canvas id="myChart-meta-ind" width="500" height="350"></canvas> 
+          </div>
+        
+        <div id="prevnextbutton" style="padding-left:200px">
+          <button class="btn hidden" id="prev_btn">
+            prev
+          </button>
+
+          <button class="btn hidden" id="next_btn">
+            next
+          </button>
+        </div>
+      </div>
+
+    
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div id="dashline"><hr style="border: 1px dashed black;" /></div>
+  <div style="padding-top: 2em;"></div>
   <h3>Up-Regulation</h3>
   <div style="display: flex; width: 100%;">
     <form id="fileform" action="/search/">
@@ -261,6 +328,7 @@
 
 <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="{% static 'tools/js/stats.js' %}"></script>
+<script src="{% static 'tools/js/meta.js' %}"></script>
 <script src="{% static 'tools/js/select.js' %}"></script>
 <script src="{% static 'tools/js/drawD3jStackPlot.js' %}"></script>
 <script src="{% static 'tools/js/tipso.js' %}"></script>

@@ -14,6 +14,9 @@ urlpatterns = [
 
     # check statistics
     url(r'^get_stats/$', views.get_stats, name='get_stats'),
+
+    # check meta statistics
+    url(r'^get_meta_stats/$', views.get_meta_stats, name='get_meta_stats'),
 ]
 
 if settings.DEBUG:

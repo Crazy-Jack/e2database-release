@@ -33,11 +33,11 @@ def render_upload_page(request):
 def render_search_page(request):
     """test_render_search_page"""
     # preload data
-    prepath = "/home/tianqinl/mye2/cirDraw/tools/cache.pkl"
-    if not os.path.isfile(prepath):
-        prepath = "/home/tianqinl/Code/e2database-release/cirDraw/tools/cache.pkl"
-    if not os.path.isfile(prepath):
-        prepath = "/Users/tianqinli/Code/e2database-release/cirDraw/tools/cache.pkl"
+    prepath = "/root/e2database-release/cirDraw/tools/cache_update.pkl"
+    # if not os.path.isfile(prepath):
+    #     prepath = "/home/tianqinl/Code/e2database-release/cirDraw/tools/cache.pkl"
+    # if not os.path.isfile(prepath):
+    #     prepath = "/Users/tianqinli/Code/e2database-release/cirDraw/tools/cache.pkl"
     with open(prepath, 'rb') as f:
          all_out_data = pickle.load(f)
     all_out_data_json = json.dumps(all_out_data)
@@ -77,6 +77,56 @@ def render_display_page(request, md5):
 
 
 # ====================================================================
+@csrf_exempt
+def get_meta_stats(request):
+    top_percent = request.GET['top_percent']
+    upordown = request.GET['upordown']
+    disply_percent = request.GET['disply_percent']
+    print(top_percent, upordown, disply_percent)
+
+    top_percent = min(100, max(0, int(top_percent)))
+    disply_percent = min(100, max(0, int(disply_percent)))
+    
+    # compute criterion
+    if upordown == 'up':
+        bin_clause = f"bin <= {int(top_percent)} and bin > 0"
+    else:
+        bin_clause = f"bin >= -{int(top_percent)} and bin < 0"
+    
+    limits = int(disply_percent * 141 * 0.01)
+    sql_query = f'''
+    select 1 as id, Gene, SUM(count_data) as sum_counts from MetaPercentData 
+    where {bin_clause} group by Gene ORDER BY sum_counts DESC limit {limits};'''
+    print('SQL: ', sql_query)
+    data_p = SearchTableMetaData.objects.raw(sql_query)
+
+    data_meta = []
+    data_name = []
+    # TODO: get the return of microarray ready
+    for data_i in data_p:
+        print(data_i.Gene, data_i.sum_counts)
+        obj_i = {
+            'Name': data_i.Gene,
+            'Counts': data_i.sum_counts,
+        }
+        data_meta.append(obj_i)
+        data_name.append(data_i.Gene)
+    
+
+    # query info based on the data_name
+    dataset = []
+    for gene_name in data_name:
+        sql_query = f'''
+        select * from MetaPercentData where Gene='{gene_name}';
+        '''
+        data_p = SearchTableMetaData.objects.raw(sql_query)
+        upregulated = [int(i.count_data) for i in data_p[20:]]
+        downregulated = [int(i.count_data) for i in data_p[:20]]
+        dataset.append({'gene_name': gene_name, 'up': upregulated,
+                              'down': downregulated[::-1]})
+    print([data_meta, dataset])
+    return JsonResponse([upordown, data_meta, dataset], safe=False)
+
 
 @csrf_exempt
 def get_stats(request):
@@ -160,7 +210,7 @@ def get_stats(request):
     sql_query = f'''
     select 1 as id, C.ins_count, C.genename, C.logfc_percent, C.log10padj_percent from (select count(A.GeneName)
     as ins_count,A.GeneName, AVG(Log2FC{mode_sign}{logfc}) as logfc_percent, AVG(minus_log10padj>{str(-np.log10(float(adj_p_value)))} OR A.minus_log10padj=0.0) as log10padj_percent from
-    (select GeneName, Log2FC, minus_log10padj from CombinedData {query}) as A group by A.GeneName ORDER BY ins_count DESC, logfc_percent DESC) C
+    (select GeneName, Log2FC, minus_log10padj from MicroarrayData {query}) as A group by A.GeneName ORDER BY ins_count DESC, logfc_percent DESC) C
     where C.logfc_percent > {percent} AND C.log10padj_percent > {percent};'''
     print('SQL: ', sql_query)
     data_p = SearchTableMicroarray.objects.raw(sql_query)
@@ -237,7 +287,7 @@ def search_indb(request):
         logfc = data_i.Log2FC
         logp = data_i.minus_log10padj # ?????
         CellLine = data_i.CellLine.replace(" ", "")
-        DataSet = data_i.DataSet
+        DataSet = data_i.Source
         Dose = data_i.Dose
         Duration = data_i.Duration
         GSE = data_i.GSE
@@ -255,7 +305,7 @@ def search_indb(request):
         else:
             out_data[CellLine].append(obj)
 
-        print(f"CHECKEREERERER")
+        # print(f"CHECKEREERERER")
 
     print(f"time for object iteration {time.time() - st_iter}")
     # calculate stats
@@ -316,12 +366,14 @@ def search_indb(request):
     print(f"----gene_info {len(gene_info)}")
     if len(gene_info) > 0:
         chr_num = gene_info[0].chr_num
+        print(f"chr_num {chr_num}")
         tss = np.mean([i.tss for i in gene_info])
         up_tss = max(0, tss - 200000)
         down_tss = tss + 200000
+        print(f"tss {tss}; up_tss {up_tss}; down_tss {down_tss}")
         data_chip = SearchTableChipSeq.objects.filter(chr_num__exact = chr_num).filter(mid__gt = up_tss).filter(mid__lt=down_tss)
-        print([i.score for  i in data_chip])
-        print(f"chipseq time is {time.time() - start_chipseq}")
+        # print([i.Duration for  i in data_chip])
+        # print(f"chipseq time is {time.time() - start_chipseq}")
 
         out_data = {}
         for data_i in data_chip:
@@ -329,14 +381,17 @@ def search_indb(request):
             score = data_i.score # ???
             CellLine = data_i.Cellline.replace(" ", "")
             Dose = data_i.Dose
-            Duration = data_i.Duration.replace(" ", "").replace(",", "-")
+            if data_i.Duration != data_i.Duration:
+                Durationn = "0"
+            else:
+                Duration = data_i.Duration.replace(" ", "").replace(",", "-")
             GSE = data_i.GSE
 
             # print(f"data_i.filename {data_i.filename} out {out_name}: hour: {hours}; dose {dose}")
             # create object to append
 
             duration, multi_duration = convert_RNAseq_hour_radius(Duration)
-
+            duration = 0.56
 
             obj = {"log2score": np.log2(float(score)),
                     "tss": (mid - tss)/1000,
@@ -356,7 +411,9 @@ def search_indb(request):
     end_time = time.time()
     total_time = end_time - start_time
     print(f"Total time {total_time} s")
-
+    # print(all_out_data)
+    # with open("cache_update.pkl", 'wb') as f:
+    #     pickle.dump(all_out_data, f)
     return JsonResponse(all_out_data, safe=False)
 
 
@@ -387,6 +444,7 @@ def calculate_statistics(out_data, threshold_fc):
 
 
 def convert_RNAseq_hour_radius(hours):
+    hours = hours.replace("h", "")
     if "-" in hours:
         hours = [float(i) for i in hours.split("-")]
         return convert_hour_radius(np.mean(hours)), True

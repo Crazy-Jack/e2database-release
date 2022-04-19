@@ -85,10 +85,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         # 'ENGINE': 'dj_db_conn_pool.backends.mysql',
         'NAME': 'e2database',
-        'USER': 'root',
+        'USER': 'estrogene',
         'PASSWORD': os.environ['mysql_password'],
-        # 'HOST': '127.0.0.1',
-        'HOST': '149.28.46.67',
+        'HOST': '127.0.0.1',
+        # 'HOST': '149.28.46.67',
         'PORT': 3306,
         'POOL_OPTIONS': {
             'POOL_SIZE': 50,

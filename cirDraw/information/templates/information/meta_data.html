@@ -153,12 +153,52 @@ NGS data sets to benefit the filed improving
 rigor and reproducibility.
             </p>
         </div>
-        </div>
 
+        <div style="display: flex; width: 100%;">
+            
+            <form id="fileform" action="/search/">
+              {% csrf_token %}
         
-
-
+              <label for="fname1">Mininum Up Regulate Percetage: </label>
+              <input type="text" id="fname1" class="hint" name="fname1" value="50"   size="3em"
+                  onfocus="if (this.className=='hint') { this.className = ''; this.value = '50'; }"
+                  onblur="if (this.value == '') { this.className = 'hint'; this.value = '50'; }">
+              <div style="padding-left: 1em;"></div>
+              <label for="fname1_1">Log Fold Change Cutoff: </label>
+              <input type="text" id="fname1_1" class="hint" name="fname1_1" value="0.5"  size="3em"
+                  onfocus="if (this.className=='hint') { this.className = ''; this.value = '0.5'; }"
+                  onblur="if (this.value == '') { this.className = 'hint'; this.value = '0.5'; }">
+              <div style="border-left: 1em;"></div>
+              <label for="fname1_2">Adjusted P-Value Cutoff: </label>
+              <input type="text" id="fname1_2" class="hint" name="fname1_2" value="0.1"   size="3em"
+                  onfocus="if (this.className=='hint') { this.className = ''; this.value = '0.1'; }"
+                  onblur="if (this.value == '') { this.className = 'hint'; this.value = '0.1'; }">
+              <div style="border-left: 1em;"></div>
+              <div style="display: flex;">
+                <input type="submit" id="submit1" value="Search">
+                <div id="processtip1" style="margin-left: 10px; margin-top: 7px;"></div>
+              </div>
+              
+              <!-- <a id="refresher" href='/tools/'><i class="fas fa-redo-alt ml-1"></i></a> -->
+            </form>
+            
+        </div>
+        <div>
+            <canvas id="myChart-meta" width="663" height="350"></canvas> 
+        </div>
+       
+    </div>
 
 </section>
+
+{% endblock %}
+
+
+{% block otherJS %}
+{% load static %}
+{% csrf_token %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
+<script src="{% static 'tools/js/meta.js' %}" type="text/javascript"></script>
 
 {% endblock %}

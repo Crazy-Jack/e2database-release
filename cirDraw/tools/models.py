@@ -11,15 +11,13 @@ from django.db import models
 class SearchTableMicroarray(models.Model):
     """User table, store statistic result"""
     Log2FC = models.FloatField(null=True, db_column='Log2FC')
-    p_value = models.FloatField(null=True, db_column='p_value')
+    p_value = models.FloatField(null=True, db_column='pvalue')
     padj = models.FloatField(null=True, db_column='padj')
-    minus_log10p = models.FloatField(null=True, db_column='minus_log10p')
     minus_log10padj = models.FloatField(null=True, db_column='minus_log10padj')
 
     GeneName = models.CharField(max_length=255, db_column='GeneName')
 
     CellLine = models.CharField(max_length=255, db_column='CellLine', default="")
-    DataSet = models.CharField(max_length=255, db_column='DataSet', default="")
     Dose = models.IntegerField(db_column='Dose', default="")
     Rep = models.IntegerField(db_column='Rep', default="")
     Duration = models.FloatField(null=True, db_column='Duration')
@@ -55,7 +53,7 @@ class SearchTableRNAseq(models.Model):
 
 class SearchTableChipSeq(models.Model):
     """ChipSeq table"""
-    chr_num = models.CharField(max_length=255, db_column='chr', default="")
+    chr_num = models.CharField(max_length=255, db_column='chr_num', default="")
     start = models.IntegerField(db_column='start', null=True)
     end = models.IntegerField(db_column='end', null=True)
     peakid = models.CharField(max_length=255, db_column='peakid', default="")
@@ -82,3 +80,13 @@ class SearchTableChipSeqRefData(models.Model):
 
     class Meta:
         db_table = 'ChipseqReference'
+
+
+class SearchTableMetaData(models.Model):
+    Gene = models.CharField(max_length=255, db_column='Gene', default="")
+    bin = models.IntegerField(db_column='bin', null=True)
+    count_data = models.IntegerField(db_column='count_data', null=True)
+
+    class Meta:
+        db_table = 'MetaPercentData'
+    

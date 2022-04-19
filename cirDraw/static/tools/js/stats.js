@@ -1,12 +1,85 @@
 $(document).ready(function () {
     window.click_once = false;
     const button = document.querySelector('button');
-
+    
     $('#button').click(function (e) {
         e.preventDefault();
         $('#fname1').html('GREB1');
     });
     
+    function update_dataset_right() {
+        negative_data = []
+        for (i in window.all_meta_dataset[window.showing_index]['down']) {
+            negative_data.push(-1 * window.all_meta_dataset[window.showing_index]['down'][i])
+        }
+        const data_ind = {
+            labels: ["0-5", "5-10", "10-15", "15-20", "20-25", "25-30", "30-35",
+                    "35-40", "40-45", "45-50", "50-55", "55-60", "60-65", "65-70", "70-75",
+                    "75-80", "80-85", "85-90", "90-95", "95-100"],
+            datasets: [{
+                label: 'Up Regulated',
+                data: window.all_meta_dataset[window.showing_index]['up'],
+                backgroundColor: [
+                    'rgba(255, 0, 0, 0.5)',
+                ],
+                borderColor: [
+                    'rgba(255, 0, 0, 1)',
+                ],
+                borderWidth: 1
+            }, {
+                label: 'Down Regulated',
+                data: negative_data,
+                backgroundColor: [
+                    'rgba(0, 0, 255, 0.5)',
+                ],
+                borderColor: [
+                    'rgba(0, 0, 255, 1)',
+                ],
+                borderWidth: 1
+            }]
+        };
+        return data_ind;
+
+    }
+    $('#prev_btn').click(function (e) {
+        e.preventDefault();
+        console.log('fefefe')
+        Chart.helpers.each(Chart.instances, function(instance){
+            //console.log(instance.canvas.id);
+      
+            if ((instance.canvas.id == 'myChart-meta-ind')) {
+              // chnage chart js dataset
+              window.showing_index = window.showing_index - 1
+              if (window.showing_index < 0) {
+                window.showing_index = 0
+              }
+              instance.data = update_dataset_right()
+              instance.options.plugins.title.text = 'Regulation Percentile for Gene ' + window.all_meta_dataset[window.showing_index].gene_name
+              instance.update();
+            }
+            
+          });
+    })
+
+    $('#next_btn').click(function (e) {
+        e.preventDefault();
+        console.log('next')
+        Chart.helpers.each(Chart.instances, function(instance){
+            //console.log(instance.canvas.id);
+      
+            if ((instance.canvas.id == 'myChart-meta-ind')) {
+              // chnage chart js dataset
+              window.showing_index = window.showing_index + 1
+              if (window.showing_index > 19) {
+                window.showing_index = 19
+              }
+              instance.data = update_dataset_right()
+              instance.options.plugins.title.text = 'Regulation Percentile for Gene ' + window.all_meta_dataset[window.showing_index].gene_name
+              instance.update();
+            }
+            
+          });
+    })
 
     function createDownloadLink(anchorSelector, str, fileName){
         if(window.navigator.msSaveOrOpenBlob) {
@@ -27,11 +100,193 @@ $(document).ready(function () {
         createDownloadLink("#export",str,"file.txt");
     });
 
+    $('#submit3').click(function (e) {
+        e.preventDefault();
+        Chart.helpers.each(Chart.instances, function(instance){
+            instance.destroy();
+        });
+        document.getElementById("meta_results_id").classList.add("hidden");
+        document.getElementById("prevnextbutton").classList.add("hidden"); 
+        document.getElementById("prev_btn").classList.add("hidden");
+        document.getElementById("next_btn").classList.add("hidden");
+        document.getElementById("myChart-meta").innerText = "";
+        $('#myChart-meta-div').html(`<div id="myChart-meta-div">
+        <canvas id="myChart-meta" width="500" height="350"></canvas> 
+      </div>`)
+        
+        var top_percent = $('#fname3').val();
+        var upordown = $('#fname4').val();
+        var disply_percent = $('#fname5').val();
+        console.log(top_percent, upordown, disply_percent)
+
+        $.getJSON("/tools/get_meta_stats/", {
+            top_percent: top_percent,
+            upordown: upordown,
+            disply_percent: disply_percent
+        }).done(function(processResult) {
+            document.getElementById('meta_results_id').classList.remove("hidden");
+            document.getElementById('prevnextbutton').classList.remove("hidden");
+            document.getElementById("prev_btn").classList.remove("hidden");
+            document.getElementById("next_btn").classList.remove("hidden");
+            
+            console.log(processResult);
+            var colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#53FA04', '#00B3E6',
+                        '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+                        '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
+                        '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+                        '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
+                        '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+                        '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
+                        '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+                        '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
+                        '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'
+                    ];
+            var datasets_counts = [];
+            var datasets_names = []
+            for (i in processResult[1]){
+                datasets_counts.push(processResult[1][i].Counts)
+                datasets_names.push(processResult[1][i].Name)
+            }
+            console.log(datasets_counts, datasets_names)
+            upordown = processResult[0]
+            if (upordown == 'up') {
+                var count_color = 'rgba(255, 0, 0, 0.5)'
+                var count_bcolor = 'rgba(255, 0, 0, 1)'
+                var labels = 'Up Regulated'
+            } else {
+                var count_color = 'rgba(0, 0, 255, 0.5)'
+                var count_bcolor = 'rgba(0, 0, 255, 1)'
+                var labels = 'Down Regulated'
+            }
+            const data = {
+                labels: datasets_names,
+                datasets: [{
+                    label: labels,
+                    data: datasets_counts,
+                    backgroundColor: [
+                        count_color,
+                    ],
+                    borderColor: [
+                        count_bcolor,
+                    ],
+                    borderWidth: 1
+                }]
+            };
+                    
+            // config 
+            const config = {
+                type: 'bar',
+                data: data,
+                options: { 
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Selected Genes'
+                        }
+                    },
+                    scales: {
+                    
+                    y: {
+                        beginAtZero: true
+                    },
+                    x: {
+                        ticks: {
+                            autoSkip: false
+                        }
+                    }
+                    
+
+                    }
+                }
+            };
+        
+            // render init block
+            const myChart = new Chart(
+                document.getElementById('myChart-meta'),
+                config
+            );
+
+            // For right chart individual one 
+            window.showing_index = 0;
+            window.all_meta_dataset = processResult[2];
+            
+            console.log(window.all_meta_dataset[window.showing_index]['up'])
+            negative_data = []
+            for (i in window.all_meta_dataset[window.showing_index]['down']) {
+                negative_data.push(-1 * window.all_meta_dataset[window.showing_index]['down'][i])
+            }
+            const data_ind = {
+                labels: ["0-5", "5-10", "10-15", "15-20", "20-25", "25-30", "30-35",
+                        "35-40", "40-45", "45-50", "50-55", "55-60", "60-65", "65-70", "70-75",
+                        "75-80", "80-85", "85-90", "90-95", "95-100"],
+                datasets: [{
+                    label: 'Up Regulated',
+                    data: window.all_meta_dataset[window.showing_index]['up'],
+                    backgroundColor: [
+                        'rgba(255, 0, 0, 0.5)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 0, 0, 1)',
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Down Regulated',
+                    data: negative_data,
+                    backgroundColor: [
+                        'rgba(0, 0, 255, 0.5)',
+                    ],
+                    borderColor: [
+                        'rgba(0, 0, 255, 1)',
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const config_ind = {
+                type: 'bar',
+                data: data_ind,
+                options: {
+                    plugins: {
+                        title: { 
+                            display: true,
+                            text: 'Regulation Percentile for Gene ' + window.all_meta_dataset[window.showing_index].gene_name
+                        }
+                    },
+                    scales: {
+                    
+                    y: {
+                        beginAtZero: true
+                    },
+                    x: {
+                        ticks: {
+                            autoSkip: false
+                        }
+                    }
+                    
+
+                    }
+                }
+            };
+
+            // render init block
+            const myChart_ind = new Chart(
+                document.getElementById('myChart-meta-ind'),
+                config_ind
+            );
+
+
+        }).failed(function (){
+            $('#processtip1').html('<p>Server timeout, please <a id="refresher" onclick="location.reload()"><i>refresh</i><i class="fas fa-redo-alt ml-1"></i></a></p>');
+        });
+    });
+
 
 
     $('#submit1').click(function (e) {
         e.preventDefault();
         document.getElementById("post_table_1").classList.add("hidden");
+        
+      
         var start_time = Date.now();
         //e.stopPropagation();
         console.log(start_time, );
@@ -144,7 +399,7 @@ $(document).ready(function () {
             }
         );
     });
-    
+
     function stats_process_result (processResult, mode) {
         
         if (mode == 'up') {
@@ -335,5 +590,9 @@ $(document).ready(function () {
         // download 
         createDownloadLink(`#export_${id_mode}_rna`,str_rna,"RNA-seq-genelist.txt");
         createDownloadLink(`#export_${id_mode}`,str_micro,"MicroArray-genelist.txt");
-    }
+    };
+
+
+
+
 });
