@@ -8,7 +8,7 @@
 from django.db import models
 
 
-class SearchTable(models.Model):
+class SearchTableMicroarray(models.Model):
     """User table, store statistic result"""
     Log2FC = models.FloatField(null=True, db_column='Log2FC')
     p_value = models.FloatField(null=True, db_column='p_value')
@@ -16,30 +16,27 @@ class SearchTable(models.Model):
     minus_log10p = models.FloatField(null=True, db_column='minus_log10p')
     minus_log10padj = models.FloatField(null=True, db_column='minus_log10padj')
 
-    filename = models.CharField(max_length=255, db_column='filename')
     GeneName = models.CharField(max_length=255, db_column='GeneName')
 
     CellLine = models.CharField(max_length=255, db_column='CellLine', default="")
-    RepL = models.CharField(max_length=255, db_column='RepL', default="")
     DataSet = models.CharField(max_length=255, db_column='DataSet', default="")
     Dose = models.IntegerField(db_column='Dose', default="")
     Rep = models.IntegerField(db_column='Rep', default="")
-    Duration = models.IntegerField(db_column='Duration', default="")
+    Duration = models.FloatField(null=True, db_column='Duration')
     GSE = models.CharField(max_length=255, db_column='GSE', default="")
+    Source = models.CharField(max_length=255, db_column='Source', default="")
 
     class Meta:
-        db_table = 'CombinedData'
+        db_table = 'MicroarrayData'
 
 class SearchTableRNAseq(models.Model):
     """RNAseq table"""
     Log2FC = models.FloatField(null=True, db_column='Log2FC')
     lfcSE = models.FloatField(null=True, db_column='lfcSE')
-    stat = models.FloatField(null=True, db_column='stat')
+    stat = models.FloatField(null=True, db_column='stat') # ?
     p_value = models.FloatField(null=True, db_column='pvalue')
     padj = models.FloatField(null=True, db_column='padj')
     
-    ensembl = models.CharField(max_length=255, db_column='ensembl', default="")
-    entrezgene_id = models.IntegerField(db_column='entrezgene_id', default="")
     GeneName = models.CharField(max_length=255, db_column='GeneName', default="")
 
     CellLine = models.CharField(max_length=255, db_column='CellLine', default="")
@@ -48,16 +45,16 @@ class SearchTableRNAseq(models.Model):
     Dose = models.FloatField(null=True, db_column='Dose')
     
     Duration = models.CharField(max_length=255, db_column='Duration', default="")
-    
 
     minus_log10padj = models.FloatField(null=True, db_column='minus_log10padj')
+    Source = models.CharField(max_length=255, db_column='Source', default="")
 
     class Meta:
         db_table = 'RNAseqData'
 
 
 class SearchTableChipSeq(models.Model):
-    """RNAseq table"""
+    """ChipSeq table"""
     chr_num = models.CharField(max_length=255, db_column='chr', default="")
     start = models.IntegerField(db_column='start', null=True)
     end = models.IntegerField(db_column='end', null=True)
@@ -68,10 +65,10 @@ class SearchTableChipSeq(models.Model):
     Cellline = models.CharField(max_length=255, db_column='Cellline', default="")
     Duration = models.CharField(max_length=255, db_column='Duration', default="")
     Dose = models.FloatField(null=True, db_column='Dose')
+    Source = models.CharField(max_length=255, db_column='Source', default="")
 
     class Meta:
         db_table = 'ChipSeqData'
-
 
 class SearchTableChipSeqRefData(models.Model):
     """RNAseq table"""

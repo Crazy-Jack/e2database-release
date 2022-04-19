@@ -163,7 +163,7 @@ def get_stats(request):
     (select GeneName, Log2FC, minus_log10padj from CombinedData {query}) as A group by A.GeneName ORDER BY ins_count DESC, logfc_percent DESC) C
     where C.logfc_percent > {percent} AND C.log10padj_percent > {percent};'''
     print('SQL: ', sql_query)
-    data_p = SearchTable.objects.raw(sql_query)
+    data_p = SearchTableMicroarray.objects.raw(sql_query)
     print(len(data_p))
 
     print(data_p.columns)
@@ -187,7 +187,7 @@ def get_stats(request):
     (select GeneName, Log2FC, minus_log10padj from RNAseqData {query}) as A group by A.GeneName ORDER BY ins_count DESC, logfc_percent DESC) C
     where C.logfc_percent > {percent} AND C.log10padj_percent > {percent};'''
     print('RNAseq SQL: ', sql_query)
-    data_p = SearchTable.objects.raw(sql_query)
+    data_p = SearchTableMicroarray.objects.raw(sql_query)
     print(len(data_p))
 
     print(data_p.columns)
@@ -223,7 +223,7 @@ def search_indb(request):
     print(f"gene_name {gene_name}")
 
     start_mr_search_time = time.time()
-    data = SearchTable.objects.filter(GeneName__exact = gene_name)
+    data = SearchTableMicroarray.objects.filter(GeneName__exact = gene_name)
     print(f"microarray seach time {time.time() - start_mr_search_time} s")
 
 
@@ -237,10 +237,8 @@ def search_indb(request):
         logfc = data_i.Log2FC
         logp = data_i.minus_log10padj # ?????
         CellLine = data_i.CellLine.replace(" ", "")
-        RepL = data_i.RepL
         DataSet = data_i.DataSet
         Dose = data_i.Dose
-        Rep = data_i.Rep
         Duration = data_i.Duration
         GSE = data_i.GSE
 
@@ -399,41 +397,41 @@ def convert_hour_radius(hours):
     return np.log(hours + 1)
 
 
-def meta_info_process(filename):
-    """filter the filename"""
-    filename_list = filename.split("_")
-    out_name_list = []
-    hours = 0
-    dose = 0
-    hour_string = ""
-    dose_string = ""
+# def meta_info_process(filename):
+#     """filter the filename"""
+#     filename_list = filename.split("_")
+#     out_name_list = []
+#     hours = 0
+#     dose = 0
+#     hour_string = ""
+#     dose_string = ""
 
 
-    for piece in filename_list:
-        piece = piece.replace("\"", "")
-        append_switch = 1
-        if 'h' == piece.lower()[-1]:
-            try:
-                hours = int(piece[:-1])
-                append_switch = 0
-            except Exception as e:
-                warnings.warn(f"Warning: Unsuccessful parsing for hours: {e}")
-        if 'nM' == piece[-2:]:
-            try:
-                dose = int(piece[:-2])
-                append_switch = 0
-            except Exception as e:
-                warnings.warn(f"Warning: Unsuccessful parsing for dose: {e}")
-        # cout as part of the name if not be used as dose or hours
-        if append_switch:
-            out_name_list.append(piece)
+#     for piece in filename_list:
+#         piece = piece.replace("\"", "")
+#         append_switch = 1
+#         if 'h' == piece.lower()[-1]:
+#             try:
+#                 hours = int(piece[:-1])
+#                 append_switch = 0
+#             except Exception as e:
+#                 warnings.warn(f"Warning: Unsuccessful parsing for hours: {e}")
+#         if 'nM' == piece[-2:]:
+#             try:
+#                 dose = int(piece[:-2])
+#                 append_switch = 0
+#             except Exception as e:
+#                 warnings.warn(f"Warning: Unsuccessful parsing for dose: {e}")
+#         # cout as part of the name if not be used as dose or hours
+#         if append_switch:
+#             out_name_list.append(piece)
 
-    M = out_name_list[0]
-    out_name_list = out_name_list[1:]
-    out_name_list = [p for p in out_name_list if not re.match(r'^\d+', p)]
+#     M = out_name_list[0]
+#     out_name_list = out_name_list[1:]
+#     out_name_list = [p for p in out_name_list if not re.match(r'^\d+', p)]
 
-    out_name = "_".join(out_name_list)
-    return out_name, hours, dose, M
+#     out_name = "_".join(out_name_list)
+#     return out_name, hours, dose, M
 
 
 

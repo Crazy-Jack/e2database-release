@@ -879,7 +879,7 @@ $(document).ready(function () {
                                 label: function(context) {
                                     var dur = Math.round(Math.exp(context.raw.duration) - 1);
                                     if (context.raw.multi_duration) {
-                                        var dur = 'Multiple';
+                                        var dur = 'Multiple/Missing';
                                     }
                                     return context.raw.name + ': Duration: ' + dur + ' H ; logfc: ' + Number.parseFloat(context.raw.logfc).toPrecision(2) + '; '
                                            + '-log adj p value: ' + Number.parseFloat(context.raw.logp).toPrecision(2)
@@ -1029,8 +1029,6 @@ $(document).ready(function () {
                         boxContainer.appendChild(label_invisible)
                         boxContainer.appendChild(box);
                         boxContainer.appendChild(label);
-                        
-                        
 
                         container.appendChild(boxContainer);
 

@@ -6,3 +6,8 @@ create table mytable (
     id int not null auto_increment,
     myfield varchar(255) not null default ''
 );
+
+
+/* 
+
+*/ 

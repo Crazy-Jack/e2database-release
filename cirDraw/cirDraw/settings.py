@@ -88,7 +88,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': os.environ['mysql_password'],
         # 'HOST': '127.0.0.1',
-        'HOST': 'estrogene.org',
+        'HOST': '149.28.46.67',
         'PORT': 3306,
         'POOL_OPTIONS': {
             'POOL_SIZE': 50,

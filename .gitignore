@@ -5,4 +5,3 @@ database/
 uwsgi.ini
 uwsgi.ini-backup
 env/
-settings.py

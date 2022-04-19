@@ -1,5 +1,7 @@
 # System Info: Ubuntu 18.04 LTS x64
 
+# allow ssh connection
+sudo ufw allow ssh
 
 # Create a user with sudo previliage 
 username="estrogene1"
@@ -14,6 +16,7 @@ echo "\nInstalling MySQL..."
 sudo apt update
 sudo apt install mysql-server -y
 sudo systemctl start mysql.service
+
 
 # excecuting mysql 
 sudo mysql -h localhost -u root -p < ./createdb.sql
