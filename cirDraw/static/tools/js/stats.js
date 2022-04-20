@@ -6,7 +6,77 @@ $(document).ready(function () {
         e.preventDefault();
         $('#fname1').html('GREB1');
     });
-    
+    function draw_left_bar_plot(processResult) {
+        var datasets_counts = [];
+            var datasets_names = []
+            for (i in processResult[1]){
+                if (upordown == 'up') {
+                    datasets_counts.push(processResult[1][i].Counts)
+                } else {
+                    datasets_counts.push(-1 * processResult[1][i].Counts)
+                }
+                
+                datasets_names.push(processResult[1][i].Name)
+            }
+            console.log(datasets_counts, datasets_names)
+            upordown = processResult[0]
+            if (upordown == 'up') {
+                var count_color = 'rgba(255, 0, 0, 0.5)'
+                var count_bcolor = 'rgba(255, 0, 0, 1)'
+                var labels = 'Up Regulated'
+            } else {
+                var count_color = 'rgba(0, 0, 255, 0.5)'
+                var count_bcolor = 'rgba(0, 0, 255, 1)'
+                var labels = 'Down Regulated'
+            }
+            const data = {
+                labels: datasets_names,
+                datasets: [{
+                    label: labels,
+                    data: datasets_counts,
+                    backgroundColor: [
+                        count_color,
+                    ],
+                    borderColor: [
+                        count_bcolor,
+                    ],
+                    borderWidth: 1
+                }]
+            };
+                    
+            // config 
+            const config = {
+                type: 'bar',
+                data: data,
+                options: { 
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Selected Genes'
+                        }
+                    },
+                    scales: {
+                    
+                    y: {
+                        beginAtZero: true
+                    },
+                    x: {
+                        ticks: {
+                            autoSkip: false
+                        }
+                    }
+                    
+
+                    }
+                }
+            };
+        
+            // render init block
+            const myChart = new Chart(
+                document.getElementById('myChart-meta'),
+                config
+            );
+    }
     function update_dataset_right() {
         negative_data = []
         for (i in window.all_meta_dataset[window.showing_index]['down']) {
@@ -70,8 +140,8 @@ $(document).ready(function () {
             if ((instance.canvas.id == 'myChart-meta-ind')) {
               // chnage chart js dataset
               window.showing_index = window.showing_index + 1
-              if (window.showing_index > 19) {
-                window.showing_index = 19
+              if (window.showing_index >= window.all_meta_dataset.length) {
+                window.showing_index = (window.all_meta_dataset.length - 1)
               }
               instance.data = update_dataset_right()
               instance.options.plugins.title.text = 'Regulation Percentile for Gene ' + window.all_meta_dataset[window.showing_index].gene_name
@@ -102,6 +172,8 @@ $(document).ready(function () {
 
     $('#submit3').click(function (e) {
         e.preventDefault();
+        document.getElementById("processtip3").innerHTML = "<span class='ld ld-ring ld-spin'></span>"
+
         Chart.helpers.each(Chart.instances, function(instance){
             instance.destroy();
         });
@@ -130,82 +202,8 @@ $(document).ready(function () {
             document.getElementById("next_btn").classList.remove("hidden");
             
             console.log(processResult);
-            var colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#53FA04', '#00B3E6',
-                        '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
-                        '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
-                        '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
-                        '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
-                        '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
-                        '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
-                        '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
-                        '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
-                        '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'
-                    ];
-            var datasets_counts = [];
-            var datasets_names = []
-            for (i in processResult[1]){
-                datasets_counts.push(processResult[1][i].Counts)
-                datasets_names.push(processResult[1][i].Name)
-            }
-            console.log(datasets_counts, datasets_names)
-            upordown = processResult[0]
-            if (upordown == 'up') {
-                var count_color = 'rgba(255, 0, 0, 0.5)'
-                var count_bcolor = 'rgba(255, 0, 0, 1)'
-                var labels = 'Up Regulated'
-            } else {
-                var count_color = 'rgba(0, 0, 255, 0.5)'
-                var count_bcolor = 'rgba(0, 0, 255, 1)'
-                var labels = 'Down Regulated'
-            }
-            const data = {
-                labels: datasets_names,
-                datasets: [{
-                    label: labels,
-                    data: datasets_counts,
-                    backgroundColor: [
-                        count_color,
-                    ],
-                    borderColor: [
-                        count_bcolor,
-                    ],
-                    borderWidth: 1
-                }]
-            };
-                    
-            // config 
-            const config = {
-                type: 'bar',
-                data: data,
-                options: { 
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Selected Genes'
-                        }
-                    },
-                    scales: {
-                    
-                    y: {
-                        beginAtZero: true
-                    },
-                    x: {
-                        ticks: {
-                            autoSkip: false
-                        }
-                    }
-                    
-
-                    }
-                }
-            };
-        
-            // render init block
-            const myChart = new Chart(
-                document.getElementById('myChart-meta'),
-                config
-            );
-
+            
+            
             // For right chart individual one 
             window.showing_index = 0;
             window.all_meta_dataset = processResult[2];
@@ -273,7 +271,10 @@ $(document).ready(function () {
                 document.getElementById('myChart-meta-ind'),
                 config_ind
             );
-
+            
+            // processing tooltip
+            $('#processtip3').html(`<div id='processtip3' style='margin-left: 10px; margin-top: 7px;'></div>`)
+        
 
         }).failed(function (){
             $('#processtip1').html('<p>Server timeout, please <a id="refresher" onclick="location.reload()"><i>refresh</i><i class="fas fa-redo-alt ml-1"></i></a></p>');
