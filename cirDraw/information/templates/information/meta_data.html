@@ -13,15 +13,17 @@
             <h3>Dataset Components</h3>
             
             <br>
-            <p>EstroGene database currently curates 128 publicly available data sets from eight distinct NGS technologies, which consists
-                of 286 data points for downstream analysis. All data sets were downloaded from Gene Expression Omnibus and
-                processed under the uniformed pipelines.</p>
+            <p>EstroGene database currently curates 139 publicly available data sets from eight distinct NGS technologies, which consists
+                of 249 data points for downstream analysis. All data sets were downloaded from Gene Expression Omnibus and
+                processed under the uniformed pipelines. For all the data sets, we provide metadata inventory with detailed experiment documentations and open for crowd-sourcing.
+                We processed and analyzed all the microarray, RNA-seq and ChIP-seq data in this beta version.  
+                </p>
             </br>
             <div>
                 
                 <div style='display: flex;'>
-  
-                <img src="{% static 'base/img/metadata-process-pipe.png' %}" width="30%" style="padding-right: 2vw;">
+ 
+                    <img src="{% static 'base/img/metadata-process-pipe.png' %}" width="30%" style="padding-right: 2vw;">
 
                 
                 
@@ -32,51 +34,42 @@
                       <th>Dataset curated</th>
                       <th>Individual Data Points</th>
                     </tr>
-                    
-                    
-                    
+
                     <tr>
                         <td rowspan=2 >Expressional Profiling</td>
                         <td>RNA-seq</td>
                         <td>25</td>
-                        <td>68</td>
+                        <td>66</td>
 
 
 
                     </tr>
                     <tr>
                         <td>Microarray</td>
-                        <td>23</td>
-                        <td>86</td>
+                        <td>29</td>
+                        <td>80</td>
 
 
                     </tr>
                     <tr>
-                        <td rowspan=4 >Genomic Occupancy Profiling</td>
+                        <td rowspan=3 >Genomic Occupancy Profiling</td>
                         <td>ATAC-seq</td>
-                        <td>5</td>
-                        <td>5</td>
+                        <td>6</td>
+                        <td>7</td>
 
 
                     </tr>
-                    <tr>
-
-
-                        <td>DNase-seq</td>
-                        <td>1</td>
-                        <td>1</td>
-
-                    </tr>
+                   
                     <tr>
                         <td>ER ChIP-seq</td>
-                        <td>58</td>
-                        <td>97</td>
+                        <td>62</td>
+                        <td>76</td>
 
                     </tr>
                     <tr>
                         <td>GRO-seq</td>
                         <td>10</td>
-                        <td>15</td>
+                        <td>10</td>
 
 
                     </tr>
@@ -90,15 +83,15 @@
                     </tr>
                     <tr>
                         <td>Hi-C/TCC</td>
-                        <td>4</td>
-                        <td>12</td>
+                        <td>5</td>
+                        <td>8</td>
                     </tr>
 
                     <tr>
                         <td>Total</td>
                         <td>- </td>
-                        <td>128</td>
-                        <td>286</td>
+                        <td>139</td>
+                        <td>249</td>
                     </tr>
                     
                   </table>
@@ -152,40 +145,19 @@ reporting all the experimental conditions in
 NGS data sets to benefit the filed improving
 rigor and reproducibility.
             </p>
+
+            <div align="middle"><img src="{% static 'base/img/figure4_matadata.png' %}" width="70%"></div>
+            <br><br>
+            <div style="text-align: center;">Figure 4. Data Processing pipeline.</div>
+            <br><br>
+            
+            <div align="middle"><img src="{% static 'base/img/figure5_metadata.png' %}" width="60%"></div>
+            <br><br>
+            <div style="text-align: center;">Figure 5. Strategy to consolidate transcriptomic DEGs for downstream analysis and visualization (see <a href="{% url 'tools_stats' %}"><u>statistic</u></a> page)</div>
+            <br>
+
         </div>
 
-        <div style="display: flex; width: 100%;">
-            
-            <form id="fileform" action="/search/">
-              {% csrf_token %}
-        
-              <label for="fname1">Mininum Up Regulate Percetage: </label>
-              <input type="text" id="fname1" class="hint" name="fname1" value="50"   size="3em"
-                  onfocus="if (this.className=='hint') { this.className = ''; this.value = '50'; }"
-                  onblur="if (this.value == '') { this.className = 'hint'; this.value = '50'; }">
-              <div style="padding-left: 1em;"></div>
-              <label for="fname1_1">Log Fold Change Cutoff: </label>
-              <input type="text" id="fname1_1" class="hint" name="fname1_1" value="0.5"  size="3em"
-                  onfocus="if (this.className=='hint') { this.className = ''; this.value = '0.5'; }"
-                  onblur="if (this.value == '') { this.className = 'hint'; this.value = '0.5'; }">
-              <div style="border-left: 1em;"></div>
-              <label for="fname1_2">Adjusted P-Value Cutoff: </label>
-              <input type="text" id="fname1_2" class="hint" name="fname1_2" value="0.1"   size="3em"
-                  onfocus="if (this.className=='hint') { this.className = ''; this.value = '0.1'; }"
-                  onblur="if (this.value == '') { this.className = 'hint'; this.value = '0.1'; }">
-              <div style="border-left: 1em;"></div>
-              <div style="display: flex;">
-                <input type="submit" id="submit1" value="Search">
-                <div id="processtip1" style="margin-left: 10px; margin-top: 7px;"></div>
-              </div>
-              
-              <!-- <a id="refresher" href='/tools/'><i class="fas fa-redo-alt ml-1"></i></a> -->
-            </form>
-            
-        </div>
-        <div>
-            <canvas id="myChart-meta" width="663" height="350"></canvas> 
-        </div>
        
     </div>
 

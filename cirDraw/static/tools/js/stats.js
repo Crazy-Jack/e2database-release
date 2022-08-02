@@ -9,6 +9,7 @@ $(document).ready(function () {
     function draw_left_bar_plot(processResult) {
         var datasets_counts = [];
             var datasets_names = []
+            var upordown = processResult[0]
             for (i in processResult[1]){
                 if (upordown == 'up') {
                     datasets_counts.push(processResult[1][i].Counts)
@@ -19,7 +20,7 @@ $(document).ready(function () {
                 datasets_names.push(processResult[1][i].Name)
             }
             console.log(datasets_counts, datasets_names)
-            upordown = processResult[0]
+            
             if (upordown == 'up') {
                 var count_color = 'rgba(255, 0, 0, 0.5)'
                 var count_bcolor = 'rgba(255, 0, 0, 1)'
@@ -170,6 +171,31 @@ $(document).ready(function () {
         createDownloadLink("#export",str,"file.txt");
     });
 
+    function getWindowFilter() {
+        var celllines = ""
+        for (i in window.focus_set['cellline']) {
+            var cell_i = $('#' + window.focus_set['cellline'][i]).html()
+            celllines += cell_i
+            celllines += ";"
+        }
+        
+        var durations = ""
+        for (i in window.focus_set['duration']) {
+            var cell_i = $('#' + window.focus_set['duration'][i]).html()
+            durations += cell_i
+            durations += ";"
+        }
+
+        var doses = ""
+        for (i in window.focus_set['dose']) {
+            var cell_i = $('#' + window.focus_set['dose'][i]).html()
+            doses += cell_i
+            doses += ";"
+        }
+
+        return (celllines, durations, doses);
+    }
+
     $('#submit3').click(function (e) {
         e.preventDefault();
         document.getElementById("processtip3").innerHTML = "<span class='ld ld-ring ld-spin'></span>"
@@ -190,8 +216,13 @@ $(document).ready(function () {
         var upordown = $('#fname4').val();
         var disply_percent = $('#fname5').val();
         console.log(top_percent, upordown, disply_percent)
-
+        
+        // filtering
+        celllines, durations, doses = getWindowFilter();
         $.getJSON("/tools/get_meta_stats/", {
+            celllines: celllines,
+            durations: durations,
+            doses: doses,
             top_percent: top_percent,
             upordown: upordown,
             disply_percent: disply_percent
@@ -203,7 +234,7 @@ $(document).ready(function () {
             
             console.log(processResult);
             
-            
+            draw_left_bar_plot(processResult);
             // For right chart individual one 
             window.showing_index = 0;
             window.all_meta_dataset = processResult[2];

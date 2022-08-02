@@ -49,7 +49,7 @@
 [role="listbox"].ss_elem_list_chipseq {
   position: relative;
   max-height: 3em;
-  width: 13em;
+  width: 10em;
   overflow-y: auto;
 }
 

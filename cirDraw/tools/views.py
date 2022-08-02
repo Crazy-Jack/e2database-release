@@ -33,7 +33,7 @@ def render_upload_page(request):
 def render_search_page(request):
     """test_render_search_page"""
     # preload data
-    prepath = "/root/e2database-release/cirDraw/tools/cache_update.pkl"
+    prepath = os.path.join(os.getcwd(), "tools/cache_update.pkl")
     # if not os.path.isfile(prepath):
     #     prepath = "/home/tianqinl/Code/e2database-release/cirDraw/tools/cache.pkl"
     # if not os.path.isfile(prepath):
@@ -79,10 +79,69 @@ def render_display_page(request, md5):
 # ====================================================================
 @csrf_exempt
 def get_meta_stats(request):
+
+
+    celllines = request.GET['celllines']
+    durations = request.GET['durations']
+    doses = request.GET['doses']
+    ## Filtering
+    # cellline
+    celllines = request.GET['celllines']
+    if len(celllines) == 0:
+        celllines = 'ALL'
+    else:
+        celllines = celllines[:-1].split(";")
+    # duration
+    durations = request.GET['durations']
+    if len(durations) == 0:
+        durations = 'ALL'
+    else:
+        print(durations[:-1])
+        durations = [int(i[:-5]) for i in durations[:-1].split(";")]
+    # dose
+    doses = request.GET['doses']
+    if len(doses) == 0:
+        doses = 'ALL'
+    else:
+        doses = [int(i[:-3]) for i in doses[:-1].split(";")]
+
+
     top_percent = request.GET['top_percent']
     upordown = request.GET['upordown']
     disply_percent = request.GET['disply_percent']
     print(top_percent, upordown, disply_percent)
+    # Filter microarray
+    if celllines != 'ALL' or durations != 'ALL' or doses != 'ALL':
+        query = "WHERE "
+        if celllines != 'ALL':
+            query += "(CellLine = '" + str(celllines[0]) + "'"
+            if len(celllines) > 1:
+                for cell_line in celllines[1:]:
+                    query += " OR CellLine = '" + str(cell_line) + "'"
+            query += ")"
+            
+
+        if durations != 'ALL':
+            query += " AND "
+            query += "(Duration = " + str(durations[0])
+            if len(durations) > 1:
+                for duration in durations[1:]:
+                    query += " OR Duration = " + str(duration)
+            query += ")"
+            
+
+        if doses != 'ALL':
+            query += " AND "
+            query += "(Dose = " + str(doses[0])
+            if len(doses) > 1:
+                for dose in doses[1:]:
+                    query += " OR Dose = " + str(dose)
+            query += ")"
+
+        print(query)
+    else:
+        query = ""
+
 
     top_percent = min(100, max(0, int(top_percent)))
     disply_percent = min(100, max(0, int(disply_percent)))
@@ -130,12 +189,13 @@ def get_meta_stats(request):
 
 @csrf_exempt
 def get_stats(request):
+    ## Filtering
+    # cellline
     celllines = request.GET['celllines']
     if len(celllines) == 0:
         celllines = 'ALL'
     else:
         celllines = celllines[:-1].split(";")
-
     # duration
     durations = request.GET['durations']
     if len(durations) == 0:
@@ -143,8 +203,6 @@ def get_stats(request):
     else:
         print(durations[:-1])
         durations = [int(i[:-5]) for i in durations[:-1].split(";")]
-
-
     # dose
     doses = request.GET['doses']
     if len(doses) == 0:
@@ -391,7 +449,7 @@ def search_indb(request):
             # create object to append
 
             duration, multi_duration = convert_RNAseq_hour_radius(Duration)
-            duration = 0.56
+            
 
             obj = {"log2score": np.log2(float(score)),
                     "tss": (mid - tss)/1000,

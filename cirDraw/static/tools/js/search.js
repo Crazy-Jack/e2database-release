@@ -3,6 +3,20 @@
 $(document).ready(function () {
     window.click_once = false;
 
+    window.notes = `
+                <div style="text-align:left;">
+                <p>*The percentages of comparisons showing up-regulation or down-regulation are calculated as below:
+                </p>
+                <ul>
+                    <li>
+                    If the comparison includes replicates, the cutoff is adjusted p value < 0.05
+                    </li>
+                    <li>
+                    If the comparison does not include replicates, the cutoff is |Log2FC| > 0.5
+                    </li>
+                </ul>
+                </div>`;
+
 
     $('.demo').tipso({
         // OPTIONS
@@ -601,10 +615,11 @@ $(document).ready(function () {
                 console.log("---------check3------------")
 
                 
+            
 
-
-
-                document.getElementById("chart1-title-id").innerHTML = "<span><h3>MicroArray Analysis</h3></span></br><span>" + calculateDatasetStats(mydatasets, 0.5)+"</span>";
+                // "<span class='tooltips_my' title='hello' data-tipso='" + tooltip_stats + "'>" + colorList[item]['data'].length + "</span>";
+                document.getElementById("chart1-title-id").innerHTML = "<span><h3>MicroArray Analysis</h3></span></br><span> " + 
+                    calculateDatasetStats(mydatasets, 0.5) + "&nbsp&nbsp</span><span class='tooltips_notes' title='hello' data-tipso='" + window.notes + `'><i class="fas fa-question-circle"></i></span>`;
                 //console.log("microarray processing end time " + Date.now())
             }
 
@@ -1372,7 +1387,8 @@ $(document).ready(function () {
                 InitFilter();
                 // $('#chart-title-id').html('<div id="chart-title-id" style="text-align: center;">hello</div>');
 
-                document.getElementById("chart2-title-id").innerHTML = "<span><h3>RNA-seq Analysis</h3></span></br><span>" + calculateDatasetStats(mydatasets_rna, 2)+"</span>";
+                document.getElementById("chart2-title-id").innerHTML = "<span><h3>RNA-seq Analysis</h3></span></br><span>" + calculateDatasetStats(mydatasets_rna, 2)+"</span>" + 
+                "&nbsp&nbsp</span><span class='tooltips_notes' title='hello' data-tipso='" + window.notes + `'><i class="fas fa-question-circle"></i></span>`;
                 // document.getElementById("chart3-title-id").innerHTML = "<span><b>ChIP-seq Analysis</b></span></br><span>";
 
                 $('.tooltips_my').tipso({
@@ -1382,6 +1398,16 @@ $(document).ready(function () {
                 titleBackground   : '#0033cc',
                 titleContent: 'Significant (p < 0.05)',
                 position: 'top-right',
+
+                    });
+                $('.tooltips_notes').tipso({
+                    // OPTIONS
+                background  :'#333333',
+                size: 'small',
+                titleBackground   : '#0033cc',
+                titleContent: 'Notes',
+                position: 'top-right',
+                width: 600,
 
                     });
                 $('.tooltips_info').tipso({
@@ -1440,19 +1466,45 @@ $(document).ready(function () {
         $("#ss_elem_list1").html(input_html_genename);
 
         var input_html_genename = '';
+        
         for (let i = 0; i < window.mydatasets_chipseq.length; i++) {
             var name = window.mydatasets_chipseq[i]['label'];
             input_html_genename += "<li id='" + name + "_id'" + " role='option'>" + name + "</li>"
+            // input_html_chipseq_duration += "<li id='" + name + "_id'" + " role='option'>" + name + "</li>"
         }
         // input_html_genename += "<li id='all_id' role='option'>ALL</li>"
-        // // //console.log(input_html_genename);
+
         $("#ss_elem_list1_c").html(input_html_genename);
+        var input_html_chipseq_duration = '';
+        var unique_chipseq_duration = [];
+        var duration_ij = '';
+        for (let i = 0; i < window.mydatasets_chipseq.length; i++) {
+            for (let j=0; j < window.mydatasets_chipseq[i].data.length; j++) {
+                
+                if (!unique_chipseq_duration.includes(window.mydatasets_chipseq[i].data[j].duration)) {
+                    duration_ij = window.mydatasets_chipseq[i].data[j].duration;
+                    unique_chipseq_duration.push(duration_ij);
+
+                    if (duration_ij == 'nan') {
+                        duration_ij = 'FBS'
+                    } else {
+                        duration_ij = Math.exp(parseFloat(duration_ij)) - 1  // reverse of this in view.py: def convert_hour_radius(hours):return np.log(hours + 1)
+                        duration_ij = duration_ij.toFixed(2)
+                    }
+                    input_html_chipseq_duration += "<li id='chip_duration_" + duration_ij + "' role='option'>" + duration_ij + "</li>";
+                }
+                
+            }
+        }
+       
+        $("#ss_elem_list3_c").html(input_html_chipseq_duration);
 
 
         $("#myfilterbox").removeClass("hidden");
         $("#myfilterbox-chipseq").removeClass("hidden");
         
         // //console.log("OGH33333");
+        
 
     }
 
@@ -1462,6 +1514,8 @@ $(document).ready(function () {
         });
 
         document.getElementById("myfilterbox").classList.add("hidden");
+
+        
         
         // document.getElementById("figure1").classList.add("hidden");
         $('#figure1').html(`
@@ -1572,13 +1626,16 @@ $(document).ready(function () {
         </div>
         
       </div>
-        `)
+        `);
+
+
         // document.getElementById("figure3").classList.add("hidden");
         document.getElementById("myfilterbox-chipseq").classList.add("hidden");
         document.getElementById("download1").classList.add("hidden");
         document.getElementById("download2").classList.add("hidden");
         document.getElementById("download3").classList.add("hidden");
         document.getElementById("chipseq-title-id").classList.add("hidden");
+        
         
 
         window.current_focus = null;
@@ -1601,6 +1658,10 @@ $(document).ready(function () {
         document.getElementById("download2").classList.remove("hidden");
         document.getElementById("download3").classList.remove("hidden");
         document.getElementById("chipseq-title-id").classList.remove("hidden");
+
+
+
+        
     }
 
     
