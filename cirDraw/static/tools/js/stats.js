@@ -295,13 +295,18 @@ $(document).ready(function () {
         }
         return [celllines, durations, doses];
     }
-
+    
+    function download_meta_stats(){
+        
+        createDownloadLink(`#export_${id_mode}_rna`,str_rna,"RNA-seq-genelist.txt");
+    }
 
     function process_submit3(processResult) {
         document.getElementById('meta_results_id').classList.remove("hidden");
         document.getElementById('prevnextbutton').classList.remove("hidden");
         document.getElementById("prev_btn").classList.remove("hidden");
         document.getElementById("next_btn").classList.remove("hidden");
+        document.getElementById("download_meta").classList.remove("hidden");
 
         console.log(processResult);
         // For left chart, see function draw_left_bar_plot
@@ -396,6 +401,9 @@ $(document).ready(function () {
         document.getElementById("prevnextbutton").classList.add("hidden");
         document.getElementById("prev_btn").classList.add("hidden");
         document.getElementById("next_btn").classList.add("hidden");
+        document.getElementById("download_meta").classList.add("hidden");
+
+        
         document.getElementById("myChart-meta").innerText = "";
         $('#myChart-meta-div').html(`<div id="myChart-meta-div">
         <canvas id="myChart-meta" width="500" height="350"></canvas>
