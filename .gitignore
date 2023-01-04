@@ -6,3 +6,4 @@ uwsgi.ini
 uwsgi.ini-backup
 env/
 my_google_cloud_key
+cirDraw_backup

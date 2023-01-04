@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'cirDraw.urls'
+ROOT_URLCONF = 'e2db.urls'
 
 TEMPLATES = [
     {
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'cirDraw.wsgi.application'
+WSGI_APPLICATION = 'e2db.wsgi.application'
 
 
 # Database
