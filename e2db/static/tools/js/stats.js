@@ -40,10 +40,10 @@ $(document).ready(function () {
 
             if (upordown == 'up') {
                 var count_bcolor = 'rgba(255, 0, 0, 1)'
-                var labels = datasets_names[0]
+                var labels = "Comparsion Number"
             } else {
                 var count_bcolor = 'rgba(0, 0, 255, 1)'
-                var labels = datasets_names[0]
+                var labels = "Comparsion Number"
             }
             const data = {
                 labels: datasets_names,
@@ -64,6 +64,9 @@ $(document).ready(function () {
                 data: data,
                 options: {
                     plugins: {
+                        tooltip: {
+                            enabled: false // <-- this option disables tooltips
+                          },
                         legend: {
                             display: false,
                         },
@@ -84,7 +87,7 @@ $(document).ready(function () {
                         },
                         title: {
                             display: true,
-                            text: 'Num. Of Dataset Included'
+                            text: 'Number of comparisons that fit the cutoff'
                           }
                     },
                     x: {
@@ -104,40 +107,40 @@ $(document).ready(function () {
                 config
             );
     }
-    function update_dataset_right() {
-        negative_data = []
-        for (i in window.all_meta_dataset[window.showing_index]['down']) {
-            negative_data.push(-1 * window.all_meta_dataset[window.showing_index]['down'][i])
-        }
-        const data_ind = {
-            labels: ["0-5", "5-10", "10-15", "15-20", "20-25", "25-30", "30-35",
-                    "35-40", "40-45", "45-50", "50-55", "55-60", "60-65", "65-70", "70-75",
-                    "75-80", "80-85", "85-90", "90-95", "95-100"],
-            datasets: [{
-                label: 'Up Regulated',
-                data: window.all_meta_dataset[window.showing_index]['up'],
-                backgroundColor: [
-                    'rgba(255, 0, 0, 0.5)',
-                ],
-                borderColor: [
-                    'rgba(255, 0, 0, 1)',
-                ],
-                borderWidth: 1
-            }, {
-                label: 'Down Regulated',
-                data: negative_data,
-                backgroundColor: [
-                    'rgba(0, 0, 255, 0.5)',
-                ],
-                borderColor: [
-                    'rgba(0, 0, 255, 1)',
-                ],
-                borderWidth: 1
-            }]
-        };
-        return data_ind;
+    // function update_dataset_right() {
+    //     negative_data = []
+    //     for (i in window.all_meta_dataset[window.showing_index]['down']) {
+    //         negative_data.push(-1 * window.all_meta_dataset[window.showing_index]['down'][i])
+    //     }
+    //     const data_ind = {
+    //         labels: ["0-5", "5-10", "10-15", "15-20", "20-25", "25-30", "30-35",
+    //                 "35-40", "40-45", "45-50", "50-55", "55-60", "60-65", "65-70", "70-75",
+    //                 "75-80", "80-85", "85-90", "90-95", "95-100"],
+    //         datasets: [{
+    //             label: 'Up Regulated ',
+    //             data: window.all_meta_dataset[window.showing_index]['up'],
+    //             backgroundColor: [
+    //                 'rgba(255, 0, 0, 0.5)',
+    //             ],
+    //             borderColor: [
+    //                 'rgba(255, 0, 0, 1)',
+    //             ],
+    //             borderWidth: 1
+    //         }, {
+    //             label: 'Down Regulated ',
+    //             data: negative_data,
+    //             backgroundColor: [
+    //                 'rgba(0, 0, 255, 0.5)',
+    //             ],
+    //             borderColor: [
+    //                 'rgba(0, 0, 255, 1)',
+    //             ],
+    //             borderWidth: 1
+    //         }]
+    //     };
+    //     return data_ind;
 
-    }
+    // }
 
     function update_dataset_right_input(gene_name, up, down) {
         negative_data = []
@@ -405,6 +408,10 @@ $(document).ready(function () {
             data: data_ind,
             options: {
                 plugins: {
+                    tooltip: {
+                        enabled: false // <-- this option disables tooltips
+                      },
+                    
                     title: {
                         display: true,
                         text: 'Regulation Percentile for Gene ' + window.all_meta_dataset[window.showing_index].gene_name
@@ -422,7 +429,7 @@ $(document).ready(function () {
                     },
                     title: {
                         display: true,
-                        text: 'Num. Of Dataset Included'
+                        text: 'Number of comparisons that fit the cutoff'
                       }
                 },
                 x: {
