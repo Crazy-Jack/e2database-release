@@ -90,3 +90,18 @@ class SearchTableMetaData(models.Model):
     class Meta:
         db_table = 'MetaPercentData'
     
+
+class SearchTableMetaRawData(models.Model):
+    """meta raw table"""
+    Gene = models.CharField(max_length=255, db_column='Gene', default="")
+    Source = models.CharField(max_length=255, db_column='Source', default="")
+    Percentile = models.FloatField(null=True, db_column='Percentile')
+    cell_line = models.CharField(max_length=255, db_column='cell_line', default="")
+    dose = models.FloatField(null=True, db_column='dose')
+    duration = models.FloatField(null=True, db_column='duration')
+    duration2 = models.FloatField(null=True, db_column='duration2')
+    rep = models.IntegerField(db_column='rep', null=True)
+    method = models.CharField(max_length=255, db_column='method', default="")
+
+    class Meta:
+        db_table = 'MetaRawPercentData'

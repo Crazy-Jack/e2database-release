@@ -151,6 +151,7 @@ function getaria() {
    *  The DOM node pointing to the listbox
    */
   aria.Listbox = function (listboxNode) {
+    console.log("init aria" + listboxNode.id)
     this.listboxNode = listboxNode;
     this.activeDescendant = this.listboxNode.getAttribute(
       'aria-activedescendant'
@@ -488,7 +489,7 @@ function getaria() {
 
   function focusSet(id) {
     // //console.log("myid " + id)
-    if ((id == 'ss_elem_list1_c') || (id == 'ss_elem_list2_c')) {
+    if ((id == 'ss_elem_list1_c') || (id == 'ss_elem_list2_c') || (id == 'ss_elem_list3_c')) {
       return 'focus_chipseq';
     } else {
       return 'focus_micro_rnaseq';
@@ -499,13 +500,11 @@ function getaria() {
     if (evt.target.getAttribute('role') !== 'option') {
       return;
     }
-    //console.log("parent")
-    //console.log(evt.target.parentNode.id)
-    //console.log("parent")
+    console.log("parent")
+    console.log(evt.target.parentNode.id)
+    console.log("parent")
 
     var focus_set_type = focusSet(evt.target.parentNode.id)
-    
-    
     
     if (iselementfocused(evt.target.id) || iselementfocused(evt.target.id, window.focus_set_chipseq)) {
       // defocus and modify the global set
@@ -522,7 +521,7 @@ function getaria() {
     this.updateScroll();
 
     // update chart based on the global filter condition
-    //console.log("focus_set_type " + focus_set_type)
+    // console.log("focus_set_type " + focus_set_type)
     if (focus_set_type == 'focus_micro_rnaseq') {
       this.updateChart();
     } else if (focus_set_type == 'focus_chipseq') {
@@ -550,7 +549,7 @@ function getaria() {
   };
 
   function convertFocusSetContentChipseq (filter_set) {
-    var filter_set_data = {'cellline_chipseq': [], 'condition_chipseq': []}
+    var filter_set_data = {'cellline_chipseq': [], 'condition_chipseq': [], 'duration_chipseq': []}
     for (var i in filter_set) {
         for (var j in filter_set[i]) {
           var id = filter_set[i][j]
@@ -595,8 +594,14 @@ function getaria() {
         // filter out other fields
         for (var j in datasets[i].data) {
           var duration_ij = datasets[i].data[j]['duration']
+
+
           duration_ij = discretizeDuration(duration_ij)
-          // //console.log("duration_ij" + duration_ij)
+
+          console.log(duration_ij)
+
+
+
           if (filter_set_content['duration'].includes(duration_ij+" hour") || filter_set_content['duration'].length == 0) {
             var dose_ij = datasets[i].data[j]['dose']
             // //console.log("inclue duration_ij " + duration_ij)
@@ -611,6 +616,8 @@ function getaria() {
               }
             }
           }
+
+
         }
 
         var new_dataset_i = JSON.parse(JSON.stringify(datasets[i]));
@@ -770,17 +777,18 @@ function getaria() {
             dose_ij = "CSS" + datasets[i].data[j]['dose'] + "nM"
           }
 
-          
-
           // //console.log("inclue duration_ij " + duration_ij)
           if (filter_set_content['condition_chipseq'].includes(dose_ij) || filter_set_content['condition_chipseq'].length == 0) {
               //console.log(dose_ij)
+
+              // filter out the
               new_data_i.push(datasets[i].data[j])
               new_pointStyle_i.push(datasets[i].pointStyle[j]);
               new_radius_i.push(datasets[i].radius[j]);
               new_border_i.push(datasets[i].borderColor[j])
              
             }
+          
         }
 
         var new_dataset_i = JSON.parse(JSON.stringify(datasets[i]));
@@ -899,6 +907,9 @@ function getaria() {
     } else if (this.listboxNode.id == 'ss_elem_list2_c') {
       var variable = 'condition_chipseq';
       var focus_set_var = 'focus_set_chipseq';
+    } else if (this.listboxNode.id == 'ss_elem_list3_c') {
+      var variable = 'duration_chipseq';
+      var focus_set_var = 'focus_set_chipseq';
     }
 
     window[focus_set_var][variable] = window[focus_set_var][variable].filter(item => item !== element.id)
@@ -913,7 +924,9 @@ function getaria() {
    *  The element to focus
    */
   aria.Listbox.prototype.focusItem = function (element) {
-    // //console.log(this.listboxNode.id)
+    console.log("Focus.....!!!")
+    console.log(this.listboxNode.id)
+    
     // add focus item into global filter criterion
     if (this.listboxNode.id == 'ss_elem_list1') {
       var variable = 'cellline';
@@ -935,17 +948,22 @@ function getaria() {
       var variable = 'condition_chipseq';
       window.focus_set_chipseq[variable].push(element.id);
       //console.log(window.focus_set_chipseq)
+    } else if (this.listboxNode.id == 'ss_elem_list3_c') {
+      var variable = 'duration_chipseq';
+      window.focus_set_chipseq[variable].push(element.id);
+      //console.log(window.focus_set_chipseq)
     } else {
       console.log("this.listboxNode.id: " + this.listboxNode.id + " not recognized!")
     }
     
-    //console.log(element.id)
+    console.log(element.id)
     
 
     if (!this.multiselectable) {
       element.setAttribute('aria-selected', 'true');
     }
     element.classList.add('focused');
+    console.log("focusing item")
     this.listboxNode.setAttribute('aria-activedescendant', element.id);
     
 
@@ -1260,11 +1278,10 @@ var aria4 = getaria();
 var aria1_c = getaria();
 var aria2_c = getaria();
 var aria3_c = getaria();
-var aria4_c = getaria();
 
 window.current_focus = null;
 window.focus_set = {'cellline': [], 'duration': [], 'dose': [], 'adj_p_value': []}
-window.focus_set_chipseq = {'cellline_chipseq': [], 'condition_chipseq': []}
+window.focus_set_chipseq = {'cellline_chipseq': [], 'condition_chipseq': [], 'duration_chipseq': []}
 window.addEventListener('load', function () {
 
   new aria1.Listbox(document.getElementById('ss_elem_list1'));
@@ -1272,9 +1289,10 @@ window.addEventListener('load', function () {
   new aria3.Listbox(document.getElementById('ss_elem_list3'));
   new aria4.Listbox(document.getElementById('ss_elem_list4'));
 
-  new aria1_c.Listbox(document.getElementById('ss_elem_list1_c'));
-  new aria2_c.Listbox(document.getElementById('ss_elem_list2_c'));
-  // new aria4.Listbox(document.getElementById('ss_elem_list4'));
+  // new aria1_c.Listbox(document.getElementById('ss_elem_list1_c'));
+  // new aria2_c.Listbox(document.getElementById('ss_elem_list2_c'));
+  new aria3_c.Listbox(document.getElementById('ss_elem_list3_c'));
+  
 });
 
 

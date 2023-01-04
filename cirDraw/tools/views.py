@@ -47,11 +47,13 @@ def render_search_page(request):
 def render_stats_page(request):
     """test_render_search_page"""
     # preload data
-    # with open("/home/tianqinl/mye2/cirDraw/tools/cache.pkl", 'rb') as f:
+    # with open(os.path.join(os.getcwd(), "tools/cache/cache_statistics.pkl"), 'rb') as f:
     #      all_out_data = pickle.load(f)
     # all_out_data_json = json.dumps(all_out_data)
-    context = {}
-    return render(request, 'tools/stats.html', context)
+    # context = {'preload': all_out_data_json}
+    
+    # return render(request, 'tools/stats.html', context)
+    return render(request, 'tools/stats.html', {})
 
 
 
@@ -79,14 +81,12 @@ def render_display_page(request, md5):
 # ====================================================================
 @csrf_exempt
 def get_meta_stats(request):
+    print(f"metastates request.GET {request.GET}")
 
-
-    celllines = request.GET['celllines']
-    durations = request.GET['durations']
-    doses = request.GET['doses']
     ## Filtering
     # cellline
     celllines = request.GET['celllines']
+    print("celllinescelllinescelllines", celllines)
     if len(celllines) == 0:
         celllines = 'ALL'
     else:
@@ -114,77 +114,134 @@ def get_meta_stats(request):
     if celllines != 'ALL' or durations != 'ALL' or doses != 'ALL':
         query = "WHERE "
         if celllines != 'ALL':
-            query += "(CellLine = '" + str(celllines[0]) + "'"
+            query += "(cell_line = '" + str(celllines[0]) + "'"
             if len(celllines) > 1:
                 for cell_line in celllines[1:]:
-                    query += " OR CellLine = '" + str(cell_line) + "'"
+                    query += " OR cell_line = '" + str(cell_line) + "'"
             query += ")"
-            
+
 
         if durations != 'ALL':
             query += " AND "
-            query += "(Duration = " + str(durations[0])
+            query += "(duration = " + str(durations[0])
             if len(durations) > 1:
                 for duration in durations[1:]:
-                    query += " OR Duration = " + str(duration)
+                    query += " OR duration = " + str(duration)
             query += ")"
-            
+
 
         if doses != 'ALL':
             query += " AND "
-            query += "(Dose = " + str(doses[0])
+            query += "(dose = " + str(doses[0])
             if len(doses) > 1:
                 for dose in doses[1:]:
-                    query += " OR Dose = " + str(dose)
+                    query += " OR dose = " + str(dose)
             query += ")"
-
+        print("CONDITIONAL QUERY: ")
         print(query)
+        print("END OF CONDITIONAL QUERY")
     else:
         query = ""
 
 
     top_percent = min(100, max(0, int(top_percent)))
     disply_percent = min(100, max(0, int(disply_percent)))
-    
+
     # compute criterion
     if upordown == 'up':
-        bin_clause = f"bin <= {int(top_percent)} and bin > 0"
+        bin_clause = f"bin < {int(top_percent)} and bin >= 0"
     else:
         bin_clause = f"bin >= -{int(top_percent)} and bin < 0"
-    
+
     limits = int(disply_percent * 141 * 0.01)
+    # old precomputed bins
+    # sql_query = f'''
+    # select 1 as id, Gene, SUM(count_data) as sum_counts from MetaPercentData
+    # where {bin_clause} group by Gene ORDER BY sum_counts DESC limit {limits};'''
+    # print('SQL: ', sql_query)
+    # data_p = SearchTableMetaData.objects.raw(sql_query)
+
+
+    '''
+
+    working :
+    select Gene, SUM(count) as sum_counts from (select SUBSTRING_INDEX(gene_percent_dis, "_", 1) as Gene, SUBSTRING_INDEX(gene_percent_dis, "_", -1) as bin, c as count from (select CONCAT(Gene, "_", FLOOR(Percentile/5)*5) as gene_percent_dis,count(*) as c from MetaRawPercentData where (cell_line = 'SKBR3' OR cell_line = 'BT474') AND (duration = 3 OR duration = 4 OR duration = 24 OR duration = 18 OR duration = 16 OR duration = 48) AND (dose = 1000
+    OR dose = 10) group by gene_percent_dis order by c) New) NNew where bin<=5 and bin>0 group by Gene ORDER BY sum_counts DESC;
+    
+    
+    '''
+    # compute conditional bins on the fly
     sql_query = f'''
-    select 1 as id, Gene, SUM(count_data) as sum_counts from MetaPercentData 
-    where {bin_clause} group by Gene ORDER BY sum_counts DESC limit {limits};'''
-    print('SQL: ', sql_query)
-    data_p = SearchTableMetaData.objects.raw(sql_query)
+        select 1 as id, Gene, SUM(count) as sum_counts from (
+            select SUBSTRING_INDEX(gene_percent_dis, "_", 1) as Gene, SUBSTRING_INDEX(gene_percent_dis, "_", -1) as bin, c as count from (
+                    select CONCAT(Gene, "_", FLOOR(Percentile/5)*5) as gene_percent_dis,count(*) as c from MetaRawPercentData {query} group by gene_percent_dis order by c
+                ) New 
+            ) NNew 
+        where {bin_clause} group by Gene ORDER BY sum_counts DESC limit {limits};
+    '''
+    print("SQL query condition meta stats: ")
+    print(sql_query)
+
+    data_p = SearchTableMetaRawData.objects.raw(sql_query)
+    print("results 1")
+    print([i for i in data_p])
+    print("End of results 1")
 
     data_meta = []
     data_name = []
     # TODO: get the return of microarray ready
+
     for data_i in data_p:
-        print(data_i.Gene, data_i.sum_counts)
         obj_i = {
             'Name': data_i.Gene,
             'Counts': data_i.sum_counts,
         }
         data_meta.append(obj_i)
         data_name.append(data_i.Gene)
-    
+
 
     # query info based on the data_name
+    # 
     dataset = []
+    
+    conditions = f' AND {query[6:]} ' if query else ' '
     for gene_name in data_name:
         sql_query = f'''
-        select * from MetaPercentData where Gene='{gene_name}';
+                select 1 as id, SUBSTRING_INDEX(gene_percent_dis, "_", 1) as Gene, SUBSTRING_INDEX(gene_percent_dis, "_", -1) * 1 as bin, c as count from (
+                        select CONCAT(Gene, "_", FLOOR(Percentile/5)*5) as gene_percent_dis,count(*) as c from MetaRawPercentData WHERE Gene='{gene_name}'{conditions}group by gene_percent_dis order by c
+                    ) New order by bin
+            ;
         '''
-        data_p = SearchTableMetaData.objects.raw(sql_query)
-        upregulated = [int(i.count_data) for i in data_p[20:]]
-        downregulated = [int(i.count_data) for i in data_p[:20]]
+        print("Gene query")
+        print(sql_query)
+        print("End of gene query")
+        
+        data_p_gene = SearchTableMetaRawData.objects.raw(sql_query)
+
+        upregulated = {i: 0 for i in range(5, 105, 5)}
+        downregulated = {i: 0 for i in range(-100, 0, 5)}
+        
+        for data_i in data_p_gene:
+            bins_i = max(0, min(100, data_i.bin + 5)) if data_i.bin >= 0 else data_i.bin
+            if bins_i > 0:
+                upregulated[bins_i] = data_i.count
+            else:
+                downregulated[bins_i] = data_i.count
+        print(upregulated)
+        print(downregulated)
+        upregulated = [upregulated[i] for i in upregulated]
+        downregulated = [downregulated[i] for i in downregulated]
         dataset.append({'gene_name': gene_name, 'up': upregulated,
                               'down': downregulated[::-1]})
-    print([data_meta, dataset])
-    return JsonResponse([upordown, data_meta, dataset], safe=False)
+
+    out_put_data = [upordown, data_meta, dataset]
+    # cache
+    make_new_cache = False
+    if make_new_cache:
+        with open("tools/cache/cache_statistics.pkl", 'wb') as f:
+            pickle.dump(out_put_data, f)
+
+    return JsonResponse(out_put_data, safe=False)
 
 
 @csrf_exempt
@@ -192,6 +249,7 @@ def get_stats(request):
     ## Filtering
     # cellline
     celllines = request.GET['celllines']
+    print("celllinescelllinescelllines: ", celllines)
     if len(celllines) == 0:
         celllines = 'ALL'
     else:
@@ -243,7 +301,7 @@ def get_stats(request):
                 for cell_line in celllines[1:]:
                     query += " OR CellLine = '" + str(cell_line) + "'"
             query += ")"
-            
+
 
         if durations != 'ALL':
             query += " AND "
@@ -252,7 +310,7 @@ def get_stats(request):
                 for duration in durations[1:]:
                     query += " OR Duration = " + str(duration)
             query += ")"
-            
+
 
         if doses != 'ALL':
             query += " AND "
@@ -439,7 +497,9 @@ def search_indb(request):
             score = data_i.score # ???
             CellLine = data_i.Cellline.replace(" ", "")
             Dose = data_i.Dose
-            if data_i.Duration != data_i.Duration:
+
+            if data_i.Duration != data_i.Duration or data_i == 'nan':
+                print("data_i is nan")
                 Durationn = "0"
             else:
                 Duration = data_i.Duration.replace(" ", "").replace(",", "-")
@@ -449,7 +509,7 @@ def search_indb(request):
             # create object to append
 
             duration, multi_duration = convert_RNAseq_hour_radius(Duration)
-            
+
 
             obj = {"log2score": np.log2(float(score)),
                     "tss": (mid - tss)/1000,
@@ -468,8 +528,9 @@ def search_indb(request):
     all_out_data.append(out_data)
     end_time = time.time()
     total_time = end_time - start_time
-    print(f"Total time {total_time} s")
-    # print(all_out_data)
+    # print(f"Total time {total_time} s")
+    # print(f"all_out_data {all_out_data}")
+    # # print(all_out_data)
     # with open("cache_update.pkl", 'wb') as f:
     #     pickle.dump(all_out_data, f)
     return JsonResponse(all_out_data, safe=False)
@@ -506,6 +567,8 @@ def convert_RNAseq_hour_radius(hours):
     if "-" in hours:
         hours = [float(i) for i in hours.split("-")]
         return convert_hour_radius(np.mean(hours)), True
+    elif float(hours) != float(hours): # nan set the radius to be 0 hours
+        return convert_hour_radius(0), False
     else:
         return convert_hour_radius(float(hours)), False
 

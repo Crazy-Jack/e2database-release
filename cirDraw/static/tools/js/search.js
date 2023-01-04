@@ -200,10 +200,12 @@ $(document).ready(function () {
             $.getJSON("/tools/search", {
                 'gene_name': gene_name
             }).done(function(processResult) {
+                console.log("Proessing Results...")
                 console.log(processResult)
                 return main_process_result(processResult);
             }).fail(
-                function () {
+                function (d, textStatus, error) {
+                    console.error("getJSON failed, status: " + textStatus + ", error: "+error)
                     $('#processtip').html('<p>Server timeout, please <a id="refresher" onclick="location.reload()"><i>refresh</i><i class="fas fa-redo-alt ml-1"></i></a></p>');
                     $('#aftersubmit').html('<p>Gene within the same clusters: <a href="/tools/">link text</a></p>')
                     $('#myChart').html('<canvas id="myChart"></canvas>');
@@ -214,7 +216,7 @@ $(document).ready(function () {
 
 
     function main_process_result (processResult){
-        // //console.log("I'm done loading data")
+        console.log("I'm done loading data")
         console.log(processResult)
         var start_time = Date.now();
         var mydatasets = [];
@@ -931,7 +933,9 @@ $(document).ready(function () {
                             }
                         }
                     },
+                    
                 }); // END of RNAseq
+                console.log("==========END OF RNAseq+============");
                 document.getElementById("download2").addEventListener('click', function(){
                     /*Get image of canvas element*/
                     var canvas = document.getElementById("myChart_rna");
@@ -1358,7 +1362,7 @@ $(document).ready(function () {
                     }
                   },
             }); // ERAL1 DNM3
-
+            console.log("---------chipseq------------")
             document.getElementById("download3").addEventListener('click', function(){
                 /*Get image of canvas element*/
                 var canvas = document.getElementById("myChart_chipseq");
@@ -1381,6 +1385,7 @@ $(document).ready(function () {
 
 
         }
+        console.log("---------chipseq2------------")
 
             
                     // create filter table
@@ -1475,7 +1480,7 @@ $(document).ready(function () {
         // input_html_genename += "<li id='all_id' role='option'>ALL</li>"
 
         $("#ss_elem_list1_c").html(input_html_genename);
-        var input_html_chipseq_duration = '';
+        
         var unique_chipseq_duration = [];
         var duration_ij = '';
         for (let i = 0; i < window.mydatasets_chipseq.length; i++) {
@@ -1485,25 +1490,35 @@ $(document).ready(function () {
                     duration_ij = window.mydatasets_chipseq[i].data[j].duration;
                     unique_chipseq_duration.push(duration_ij);
 
-                    if (duration_ij == 'nan') {
-                        duration_ij = 'FBS'
-                    } else {
-                        duration_ij = Math.exp(parseFloat(duration_ij)) - 1  // reverse of this in view.py: def convert_hour_radius(hours):return np.log(hours + 1)
-                        duration_ij = duration_ij.toFixed(2)
-                    }
-                    input_html_chipseq_duration += "<li id='chip_duration_" + duration_ij + "' role='option'>" + duration_ij + "</li>";
                 }
                 
             }
         }
-       
+        // sort unique duration 
+        unique_chipseq_duration.sort();
+        console.log("unique_chipseq_duration")
+        console.log(unique_chipseq_duration)
+        var input_html_chipseq_duration = '';
+        for (let i=0; i < unique_chipseq_duration.length; i++) {
+            duration_ij = unique_chipseq_duration[i];
+            if (duration_ij == 0) {
+                duration_ij = 'FBS'
+            } else {
+                duration_ij = Math.exp(duration_ij) - 1  // reverse of this in view.py: def convert_hour_radius(hours):return np.log(hours + 1)
+                duration_ij = duration_ij.toFixed(2)
+            }
+            // input_html_chipseq_duration += "<li id='chip_duration_" + i + "' role='option'>" + duration_ij + "</li>";
+            input_html_chipseq_duration += "<li id='ss_elem_3_" + i + "_c' role='option'>" + duration_ij + "</li>";
+            // use unique_chipseq_duration[i] as id because of the round issue with exp
+        }
+        
+
         $("#ss_elem_list3_c").html(input_html_chipseq_duration);
+        // $("#ss_elem_list3_c").html(input_html_genename);
 
 
         $("#myfilterbox").removeClass("hidden");
         $("#myfilterbox-chipseq").removeClass("hidden");
-        
-        // //console.log("OGH33333");
         
 
     }
@@ -1517,7 +1532,6 @@ $(document).ready(function () {
 
         
         
-        // document.getElementById("figure1").classList.add("hidden");
         $('#figure1').html(`
         <div id="figure1" class="horizon-flex-contain">
         <div class="chart-container">
@@ -1640,14 +1654,13 @@ $(document).ready(function () {
 
         window.current_focus = null;
         window.focus_set = {'cellline': [], 'duration': [], 'dose': [], 'adj_p_value': []}
-        window.focus_set_chipseq = {'cellline_chipseq': [], 'condition_chipseq': []}
+        window.focus_set_chipseq = {'cellline_chipseq': [], 'condition_chipseq': [], 'duration_chipseq': []}
     }
 
     function showPage() {
         //console.log("IM SHOW PAGEGGGGGGG")
 
         document.getElementById("myfilterbox").classList.remove("hidden");
-        
 
         document.getElementById("dashline2").classList.remove("hidden");
 
