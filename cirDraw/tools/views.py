@@ -19,6 +19,17 @@ import numpy as np
 import re
 import pickle
 import os
+from decimal import *
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        # if passed in object is instance of Decimal
+        # convert it to a string
+        if isinstance(obj, Decimal):
+            return str(obj)
+        # otherwise use the default behavior
+        return json.JSONEncoder.default(self, obj)
+
 
 # ========================= RENDER PAGES ==============================
 def render_index_page(request):
@@ -47,13 +58,13 @@ def render_search_page(request):
 def render_stats_page(request):
     """test_render_search_page"""
     # preload data
-    # with open(os.path.join(os.getcwd(), "tools/cache/cache_statistics.pkl"), 'rb') as f:
-    #      all_out_data = pickle.load(f)
-    # all_out_data_json = json.dumps(all_out_data)
-    # context = {'preload': all_out_data_json}
+    with open(os.path.join(os.getcwd(), "tools/cache/cache_statistics.pkl"), 'rb') as f:
+         all_out_data = pickle.load(f)
+    all_out_data_json = json.dumps(all_out_data, cls=DecimalEncoder)
+    context = {'preload': all_out_data_json}
     
-    # return render(request, 'tools/stats.html', context)
-    return render(request, 'tools/stats.html', {})
+    return render(request, 'tools/stats.html', context)
+    # return render(request, 'tools/stats.html', {})
 
 
 
@@ -79,10 +90,7 @@ def render_display_page(request, md5):
 
 
 # ====================================================================
-@csrf_exempt
-def get_meta_stats(request):
-    print(f"metastates request.GET {request.GET}")
-
+def get_condition_data(request):
     ## Filtering
     # cellline
     celllines = request.GET['celllines']
@@ -154,20 +162,79 @@ def get_meta_stats(request):
         bin_clause = f"bin >= -{int(top_percent)} and bin < 0"
 
     limits = int(disply_percent * 141 * 0.01)
+    
+    return {
+        'sql_where_query': query,
+        'bin_clause': bin_clause,
+        'limits': limits,
+        'upordown': upordown,
+    }
+
+def get_gene_meta_stats_upanddown(gene_name, query):
+    conditions = f' AND {query[6:]} ' if query else ' '
+    sql_query = f'''
+                select 1 as id, SUBSTRING_INDEX(gene_percent_dis, "_", 1) as Gene, SUBSTRING_INDEX(gene_percent_dis, "_", -1) * 1 as bin, c as count from (
+                        select CONCAT(Gene, "_", FLOOR(Percentile/5)*5) as gene_percent_dis,count(*) as c from MetaRawPercentData WHERE Gene='{gene_name}'{conditions}group by gene_percent_dis order by c
+                    ) New order by bin
+            ;
+        '''
+    print("Gene query")
+    print(sql_query)
+    print("End of gene query")
+    
+    data_p_gene = SearchTableMetaRawData.objects.raw(sql_query)
+
+    upregulated = {i: 0 for i in range(5, 105, 5)}
+    downregulated = {i: 0 for i in range(-100, 0, 5)}
+    
+    for data_i in data_p_gene:
+        bins_i = max(0, min(100, data_i.bin + 5)) if data_i.bin >= 0 else data_i.bin
+        if bins_i > 0:
+            upregulated[bins_i] = data_i.count
+        else:
+            downregulated[bins_i] = data_i.count
+
+    upregulated = [upregulated[i] for i in upregulated]
+    downregulated = [downregulated[i] for i in downregulated]
+
+    return upregulated, downregulated
+
+@csrf_exempt
+def get_meta_stats_each_gene(request):
+    print(f"metastates request.GET {request.GET}")
+    condition_data = get_condition_data(request)
+    query = condition_data['sql_where_query']
+    bin_clause = condition_data['bin_clause']
+    limits = condition_data['limits']
+    upordown = condition_data['upordown']
+    gene_name = request.GET['gene_name']
+    conditions = f' AND {query[6:]} ' if query else ' '
+
+    upregulated, downregulated = get_gene_meta_stats_upanddown(gene_name, query)
+    output_data = [gene_name, upregulated, downregulated[::-1]]
+
+    return JsonResponse(output_data, safe=False)
+
+@csrf_exempt
+def get_meta_stats(request):
+    print(f"metastates request.GET {request.GET}")
+
     # old precomputed bins
     # sql_query = f'''
     # select 1 as id, Gene, SUM(count_data) as sum_counts from MetaPercentData
     # where {bin_clause} group by Gene ORDER BY sum_counts DESC limit {limits};'''
     # print('SQL: ', sql_query)
     # data_p = SearchTableMetaData.objects.raw(sql_query)
-
-
+    condition_data = get_condition_data(request)
+    query = condition_data['sql_where_query']
+    bin_clause = condition_data['bin_clause']
+    limits = condition_data['limits']
+    upordown = condition_data['upordown']
     '''
 
     working :
     select Gene, SUM(count) as sum_counts from (select SUBSTRING_INDEX(gene_percent_dis, "_", 1) as Gene, SUBSTRING_INDEX(gene_percent_dis, "_", -1) as bin, c as count from (select CONCAT(Gene, "_", FLOOR(Percentile/5)*5) as gene_percent_dis,count(*) as c from MetaRawPercentData where (cell_line = 'SKBR3' OR cell_line = 'BT474') AND (duration = 3 OR duration = 4 OR duration = 24 OR duration = 18 OR duration = 16 OR duration = 48) AND (dose = 1000
     OR dose = 10) group by gene_percent_dis order by c) New) NNew where bin<=5 and bin>0 group by Gene ORDER BY sum_counts DESC;
-    
     
     '''
     # compute conditional bins on the fly
@@ -206,34 +273,13 @@ def get_meta_stats(request):
     
     conditions = f' AND {query[6:]} ' if query else ' '
     for gene_name in data_name:
-        sql_query = f'''
-                select 1 as id, SUBSTRING_INDEX(gene_percent_dis, "_", 1) as Gene, SUBSTRING_INDEX(gene_percent_dis, "_", -1) * 1 as bin, c as count from (
-                        select CONCAT(Gene, "_", FLOOR(Percentile/5)*5) as gene_percent_dis,count(*) as c from MetaRawPercentData WHERE Gene='{gene_name}'{conditions}group by gene_percent_dis order by c
-                    ) New order by bin
-            ;
-        '''
-        print("Gene query")
-        print(sql_query)
-        print("End of gene query")
-        
-        data_p_gene = SearchTableMetaRawData.objects.raw(sql_query)
-
-        upregulated = {i: 0 for i in range(5, 105, 5)}
-        downregulated = {i: 0 for i in range(-100, 0, 5)}
-        
-        for data_i in data_p_gene:
-            bins_i = max(0, min(100, data_i.bin + 5)) if data_i.bin >= 0 else data_i.bin
-            if bins_i > 0:
-                upregulated[bins_i] = data_i.count
-            else:
-                downregulated[bins_i] = data_i.count
-        print(upregulated)
-        print(downregulated)
-        upregulated = [upregulated[i] for i in upregulated]
-        downregulated = [downregulated[i] for i in downregulated]
-        dataset.append({'gene_name': gene_name, 'up': upregulated,
-                              'down': downregulated[::-1]})
-
+        upregulated, downregulated = get_gene_meta_stats_upanddown(gene_name, query)
+        dataset.append({
+            'gene_name': gene_name, 
+            'up': upregulated,
+            'down': downregulated[::-1]
+        })
+        break
     out_put_data = [upordown, data_meta, dataset]
     # cache
     make_new_cache = False

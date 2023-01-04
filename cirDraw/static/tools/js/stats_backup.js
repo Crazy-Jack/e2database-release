@@ -127,75 +127,6 @@ $(document).ready(function () {
         return data_ind;
 
     }
-
-    function update_dataset_right_input(gene_name, up, down) {
-        negative_data = []
-        for (i in down) {
-            negative_data.push(-1 * down[i])
-        }
-        var pos_data = up;
-        const data_ind = {
-            labels: ["0-5", "5-10", "10-15", "15-20", "20-25", "25-30", "30-35",
-                    "35-40", "40-45", "45-50", "50-55", "55-60", "60-65", "65-70", "70-75",
-                    "75-80", "80-85", "85-90", "90-95", "95-100"],
-            datasets: [{
-                label: 'Up Regulated',
-                data: pos_data,
-                backgroundColor: [
-                    'rgba(255, 0, 0, 0.5)',
-                ],
-                borderColor: [
-                    'rgba(255, 0, 0, 1)',
-                ],
-                borderWidth: 1
-            }, {
-                label: 'Down Regulated',
-                data: negative_data,
-                backgroundColor: [
-                    'rgba(0, 0, 255, 0.5)',
-                ],
-                borderColor: [
-                    'rgba(0, 0, 255, 1)',
-                ],
-                borderWidth: 1
-            }]
-        };
-        return data_ind;
-
-    }
-
-    
-    function update_right_basic(instance) {
-        var celllines, durations, doses
-        [celllines, durations, doses] = getWindowFilter();
-        var top_percent = $('#fname3').val();
-        var upordown = $('#fname4').val();
-        var disply_percent = $('#fname5').val();
-        var gene_name = window.all_meta[window.showing_index].Name
-        
-        // ajax call
-        $.getJSON("/tools/get_meta_stats_each_gene/", {
-            celllines: celllines,
-            durations: durations,
-            doses: doses,
-            top_percent: top_percent,
-            upordown: upordown,
-            disply_percent: disply_percent,
-            gene_name: gene_name
-        }).done(function (processResult) {
-            // instance.data = update_dataset_right()
-            var gene_name = processResult[0]
-            var up = processResult[1]
-            var down = processResult[2]
-            
-            instance.data = update_dataset_right_input(gene_name, up, down);
-            instance.options.plugins.title.text = 'Regulation Percentile for Gene ' + gene_name
-            instance.update();
-        }).failed(function (){
-            $('#processtip1').html('<p>Server timeout, please <a id="refresher" onclick="location.reload()"><i>refresh</i><i class="fas fa-redo-alt ml-1"></i></a></p>');
-        });
-
-    }
     $('#prev_btn').click(function (e) {
         e.preventDefault();
         console.log('fefefe')
@@ -208,14 +139,15 @@ $(document).ready(function () {
               if (window.showing_index < 0) {
                 window.showing_index = 0
               }
-              update_right_basic(instance);
+              instance.data = update_dataset_right()
+              instance.options.plugins.title.text = 'Regulation Percentile for Gene ' + window.all_meta_dataset[window.showing_index].gene_name
+              instance.update();
             }
 
           });
     })
 
     $('#next_btn').click(function (e) {
-        // try to query the gene based on the conditions (independent ajax call to hide latency)
         e.preventDefault();
         console.log('next')
         Chart.helpers.each(Chart.instances, function(instance){
@@ -224,14 +156,12 @@ $(document).ready(function () {
             if ((instance.canvas.id == 'myChart-meta-ind')) {
               // chnage chart js dataset
               window.showing_index = window.showing_index + 1
-              if (window.showing_index >= window.all_meta.length) {
-                window.showing_index = (window.all_meta.length - 1)
+              if (window.showing_index >= window.all_meta_dataset.length) {
+                window.showing_index = (window.all_meta_dataset.length - 1)
               }
-              
-              // TODO: make an ajax call here and get back data
-              // get window conditions
-              update_right_basic(instance);
-
+              instance.data = update_dataset_right()
+              instance.options.plugins.title.text = 'Regulation Percentile for Gene ' + window.all_meta_dataset[window.showing_index].gene_name
+              instance.update();
             }
 
           });
@@ -256,8 +186,6 @@ $(document).ready(function () {
         createDownloadLink("#export",str,"file.txt");
     });
 
-
-    
     function getWindowFilter() {
         var celllines = ""
         if (window.focus_set['cellline'].length > 0) {
@@ -303,8 +231,8 @@ $(document).ready(function () {
         // For right chart individual one
         window.showing_index = 0;
         window.all_meta_dataset = processResult[2];
-        window.all_meta = processResult[1];
 
+        console.log(window.all_meta_dataset[window.showing_index]['up'])
         negative_data = []
         for (i in window.all_meta_dataset[window.showing_index]['down']) {
             negative_data.push(-1 * window.all_meta_dataset[window.showing_index]['down'][i])

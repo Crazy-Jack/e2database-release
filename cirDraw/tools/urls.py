@@ -17,7 +17,12 @@ urlpatterns = [
 
     # check meta statistics
     url(r'^get_meta_stats/$', views.get_meta_stats, name='get_meta_stats'),
+
+    # check meta statistics for each gene
+    url(r'^get_meta_stats_each_gene/$', views.get_meta_stats_each_gene, name='get_meta_stats_each_gene'),
+
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
