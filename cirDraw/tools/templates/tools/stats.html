@@ -117,8 +117,11 @@
         <div id="myChart-meta-div">
           <canvas id="myChart-meta" width="500" height="350"></canvas> 
         </div>
-        <div style="margin-left: 500px; margin-top: 3px;"><a id="download_meta" color="black" download="" href="#"> <i class="fa fa-download" style="font-size:26px;color:black"></i> </a></div>
-        
+        <div style="display:flex">
+         
+          <div style="margin-left: 500px; margin-top: 3px;"><a id="download_meta" color="black" download="" href="#" class="hidden"> <span class='ld ld-ring ld-spin' style="font-size:26px; color: gray"></span> </a></div>
+          
+        </div>
       </div>
 
       <div class="container">
@@ -126,14 +129,21 @@
             <canvas id="myChart-meta-ind" width="500" height="350"></canvas> 
           </div>
         
-        <div id="prevnextbutton" style="padding-left:220px">
-          <button class="btn hidden" id="prev_btn">
-            prev
-          </button>
-
-          <button class="btn hidden" id="next_btn">
-            next
-          </button>
+        <div id="prevnextbutton" style="padding-left:205px">
+          
+          <div style="display: flex">
+            <div id="prev_loader"></div>
+            <button class="btn hidden" id="prev_btn">
+              prev
+            </button>
+            <div style="margin-left: 10px;"></div>
+  
+            <button class="btn hidden" id="next_btn">
+              next
+            </button>
+            <div id="next_loader">  </div>
+          </div>
+          
         </div>
       </div>
 

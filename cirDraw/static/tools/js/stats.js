@@ -1,5 +1,6 @@
 $(document).ready(function () {
     window.click_once = false;
+    window.download_ready = false;
     const button = document.querySelector('button');
 
     $('#button').click(function (e) {
@@ -68,7 +69,7 @@ $(document).ready(function () {
                         },
                         title: {
                             display: true,
-                            text: 'Selected Genes'
+                            text: 'Selected Genes (top ' + processResult[1].length + ' displayed)'
                         }
                     },
                     scales: {
@@ -80,7 +81,11 @@ $(document).ready(function () {
                             callback: function(value, index, ticks) {
                                 return Math.abs(value);
                             }
-                        }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Num. Of Dataset Included'
+                          }
                     },
                     x: {
                         ticks: {
@@ -197,9 +202,7 @@ $(document).ready(function () {
             instance.data = update_dataset_right_input(gene_name, up, down);
             instance.options.plugins.title.text = 'Regulation Percentile for Gene ' + gene_name
             instance.update();
-        }).failed(function (){
-            $('#processtip1').html('<p>Server timeout, please <a id="refresher" onclick="location.reload()"><i>refresh</i><i class="fas fa-redo-alt ml-1"></i></a></p>');
-        });
+        })
 
     }
     $('#prev_btn').click(function (e) {
@@ -223,6 +226,7 @@ $(document).ready(function () {
     $('#next_btn').click(function (e) {
         // try to query the gene based on the conditions (independent ajax call to hide latency)
         e.preventDefault();
+        
         console.log('next')
         Chart.helpers.each(Chart.instances, function(instance){
             //console.log(instance.canvas.id);
@@ -241,6 +245,10 @@ $(document).ready(function () {
             }
 
           });
+
+          
+
+          
     })
 
     function createDownloadLink(anchorSelector, str, fileName){
@@ -296,10 +304,53 @@ $(document).ready(function () {
         return [celllines, durations, doses];
     }
     
-    function download_meta_stats(){
+    function prepare_download_file() {
+        // ajax call with no limits
+        var top_percent = $('#fname3').val();
+        var upordown = $('#fname4').val();
+        var disply_percent = -1;
         
-        createDownloadLink(`#export_${id_mode}_rna`,str_rna,"RNA-seq-genelist.txt");
+        // filtering
+        var filter_results = getWindowFilter();
+
+        var celllines = filter_results[0];
+        var durations = filter_results[1];
+        var doses = filter_results[2];
+
+        $.getJSON("/tools/get_meta_stats/", {
+            celllines: celllines,
+            durations: durations,
+            doses: doses,
+            top_percent: top_percent,
+            upordown: upordown,
+            disply_percent: disply_percent
+        }).done(function (processResult) {
+            var data_mata = processResult[1];
+            window.str_download = "Gene\tCount\n"
+            for (i in data_mata) {
+                window.str_download += data_mata[i].Name
+                window.str_download += "\t"
+                window.str_download += data_mata[i].Counts
+                window.str_download += "\n"
+            } 
+            console.log(window.str_download);
+            document.getElementById("download_meta").innerHTML = `<i class="fa fa-download" style="font-size:26px;color:black"></i>`
+            
+        })
     }
+
+
+    $('#download_meta').click(function (e) {
+        // e.preventDefault();
+        console.log("download_meta - download_meta call")
+        // document.getElementById("processtip4").innerHTML = "<span class='ld ld-ring ld-spin'></span>"
+        
+        createDownloadLink(`#download_meta`, window.str_download, "E2DB-meta-statistics.txt");
+        
+    });
+
+   
+
 
     function process_submit3(processResult) {
         document.getElementById('meta_results_id').classList.remove("hidden");
@@ -307,8 +358,10 @@ $(document).ready(function () {
         document.getElementById("prev_btn").classList.remove("hidden");
         document.getElementById("next_btn").classList.remove("hidden");
         document.getElementById("download_meta").classList.remove("hidden");
-
         console.log(processResult);
+        // prepare download data 
+        
+
         // For left chart, see function draw_left_bar_plot
         draw_left_bar_plot(processResult);
         // For right chart individual one
@@ -366,7 +419,11 @@ $(document).ready(function () {
                         callback: function(value, index, ticks) {
                             return Math.abs(value);
                         }
-                    }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Num. Of Dataset Included'
+                      }
                 },
                 x: {
                     ticks: {
@@ -385,6 +442,10 @@ $(document).ready(function () {
             config_ind
         );
 
+        prepare_download_file();
+
+        
+
         // processing tooltip
         $('#processtip3').html(`<div id='processtip3' style='margin-left: 10px; margin-top: 7px;'></div>`)
 
@@ -401,7 +462,10 @@ $(document).ready(function () {
         document.getElementById("prevnextbutton").classList.add("hidden");
         document.getElementById("prev_btn").classList.add("hidden");
         document.getElementById("next_btn").classList.add("hidden");
+
+        
         document.getElementById("download_meta").classList.add("hidden");
+        document.getElementById("download_meta").innerHTML = `<span class='ld ld-ring ld-spin' style='font-size:26px; color: gray'></span>`
 
         
         document.getElementById("myChart-meta").innerText = "";
@@ -417,31 +481,31 @@ $(document).ready(function () {
         // filtering
         var filter_results = getWindowFilter();
 
-        //var celllines = filter_results[0];
-        //var durations = filter_results[1];
-        //var doses = filter_results[2];
+        var celllines = filter_results[0];
+        var durations = filter_results[1];
+        var doses = filter_results[2];
 
 
-        var celllines = ""
-        for (i in window.focus_set['cellline']) {
-            var cell_i = $('#' + window.focus_set['cellline'][i]).html()
-            celllines += cell_i
-            celllines += ";"
-        }
+        // var celllines = ""
+        // for (i in window.focus_set['cellline']) {
+        //     var cell_i = $('#' + window.focus_set['cellline'][i]).html()
+        //     celllines += cell_i
+        //     celllines += ";"
+        // }
 
-        var durations = ""
-        for (i in window.focus_set['duration']) {
-            var cell_i = $('#' + window.focus_set['duration'][i]).html()
-            durations += cell_i
-            durations += ";"
-        }
+        // var durations = ""
+        // for (i in window.focus_set['duration']) {
+        //     var cell_i = $('#' + window.focus_set['duration'][i]).html()
+        //     durations += cell_i
+        //     durations += ";"
+        // }
 
-        var doses = ""
-        for (i in window.focus_set['dose']) {
-            var cell_i = $('#' + window.focus_set['dose'][i]).html()
-            doses += cell_i
-            doses += ";"
-        }
+        // var doses = ""
+        // for (i in window.focus_set['dose']) {
+        //     var cell_i = $('#' + window.focus_set['dose'][i]).html()
+        //     doses += cell_i
+        //     doses += ";"
+        // }
 
         console.log(celllines)
         console.log(durations)
@@ -456,6 +520,7 @@ $(document).ready(function () {
             disply_percent: disply_percent
         }).done(function (processResult) {
             process_submit3(processResult);
+            
         }).failed(function (){
             $('#processtip1').html('<p>Server timeout, please <a id="refresher" onclick="location.reload()"><i>refresh</i><i class="fas fa-redo-alt ml-1"></i></a></p>');
         });

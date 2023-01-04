@@ -161,7 +161,7 @@ def get_condition_data(request):
     else:
         bin_clause = f"bin >= -{int(top_percent)} and bin < 0"
 
-    limits = int(disply_percent * 141 * 0.01)
+    limits = int(disply_percent * 141 * 0.01) if disply_percent > 0 else -1
     
     return {
         'sql_where_query': query,
@@ -229,6 +229,7 @@ def get_meta_stats(request):
     query = condition_data['sql_where_query']
     bin_clause = condition_data['bin_clause']
     limits = condition_data['limits']
+    limits_sql = f" limit {limits} " if limits > 0 else ""
     upordown = condition_data['upordown']
     '''
 
@@ -244,8 +245,10 @@ def get_meta_stats(request):
                     select CONCAT(Gene, "_", FLOOR(Percentile/5)*5) as gene_percent_dis,count(*) as c from MetaRawPercentData {query} group by gene_percent_dis order by c
                 ) New 
             ) NNew 
-        where {bin_clause} group by Gene ORDER BY sum_counts DESC limit {limits};
+        where {bin_clause} group by Gene ORDER BY sum_counts DESC{limits_sql};
     '''
+    
+        
     print("SQL query condition meta stats: ")
     print(sql_query)
 
