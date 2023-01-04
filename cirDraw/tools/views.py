@@ -215,9 +215,12 @@ def get_meta_stats_each_gene(request):
 
     return JsonResponse(output_data, safe=False)
 
+
+
 @csrf_exempt
 def get_meta_stats(request):
     print(f"metastates request.GET {request.GET}")
+    
 
     # old precomputed bins
     # sql_query = f'''
@@ -253,9 +256,9 @@ def get_meta_stats(request):
     print(sql_query)
 
     data_p = SearchTableMetaRawData.objects.raw(sql_query)
-    print("results 1")
-    print([i for i in data_p])
-    print("End of results 1")
+    # print("results 1")
+    # print(len([i for i in data_p]))
+    # print("End of results 1")
 
     data_meta = []
     data_name = []
