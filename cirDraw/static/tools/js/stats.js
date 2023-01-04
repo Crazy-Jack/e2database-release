@@ -74,7 +74,13 @@ $(document).ready(function () {
                     scales: {
 
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            // Include a dollar sign in the ticks
+                            callback: function(value, index, ticks) {
+                                return Math.abs(value);
+                            }
+                        }
                     },
                     x: {
                         ticks: {
@@ -349,7 +355,13 @@ $(document).ready(function () {
                 scales: {
 
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        // Include a dollar sign in the ticks
+                        callback: function(value, index, ticks) {
+                            return Math.abs(value);
+                        }
+                    }
                 },
                 x: {
                     ticks: {
